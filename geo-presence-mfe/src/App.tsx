@@ -15,6 +15,14 @@ function App() {
   const [currentMode, setCurrentMode] = useState<GeoPresenceMode>(configuredMode);
   const [selectedUser, setSelectedUser] = useState<PresenceUser | null>(null);
 
+  const totalUserCount = mockPresenceUsers.length;
+  const publicUserCount = mockPresenceUsers.filter((user) => user.visibility === 'public').length;
+  const matchesOnlyUserCount = mockPresenceUsers.filter(
+    (user) => user.visibility === 'matches-only'
+  ).length;
+  const hiddenUserCount = mockPresenceUsers.filter((user) => user.visibility === 'hidden').length;
+  const matchedUserCount = mockPresenceUsers.filter((user) => user.isMatch).length;
+
   const handleModeToggle = () => {
     setCurrentMode((previousMode) => (previousMode === '2d' ? '3d' : '2d'));
   };
@@ -52,7 +60,19 @@ function App() {
             <strong>Initial Zoom:</strong> {initialView?.zoom ?? 'Not set'}
           </li>
           <li>
-            <strong>Mock Users:</strong> {mockPresenceUsers.length}
+            <strong>Total Users:</strong> {totalUserCount}
+          </li>
+          <li>
+            <strong>Public Users:</strong> {publicUserCount}
+          </li>
+          <li>
+            <strong>Matches-Only Users:</strong> {matchesOnlyUserCount}
+          </li>
+          <li>
+            <strong>Hidden Users:</strong> {hiddenUserCount}
+          </li>
+          <li>
+            <strong>Matched Users:</strong> {matchedUserCount}
           </li>
           <li>
             <strong>Selected User:</strong> {selectedUser?.displayName ?? 'None'}
