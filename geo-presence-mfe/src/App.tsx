@@ -4,6 +4,11 @@ import { mockGeoPresenceConfig } from './mock/mockGeoPresenceConfig';
 import { mockPresenceUsers } from './mock/mockPresenceUsers';
 import type { GeoPresenceMode } from './core/config/geoPresenceConfig';
 import type { PresenceUser } from './core/models/presenceUser';
+import {
+  countMatchedUsers,
+  countUsersByVisibility,
+  filterUsersByVisibility,
+} from './utils/presenceUserUtils';
 
 type VisibilityFilter = 'all' | 'public' | 'matches-only' | 'hidden';
 
@@ -19,17 +24,12 @@ function App() {
   const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
 
   const totalUserCount = mockPresenceUsers.length;
-  const publicUserCount = mockPresenceUsers.filter((user) => user.visibility === 'public').length;
-  const matchesOnlyUserCount = mockPresenceUsers.filter(
-    (user) => user.visibility === 'matches-only'
-  ).length;
-  const hiddenUserCount = mockPresenceUsers.filter((user) => user.visibility === 'hidden').length;
-  const matchedUserCount = mockPresenceUsers.filter((user) => user.isMatch).length;
+  const publicUserCount = countUsersByVisibility(mockPresenceUsers, 'public');
+  const matchesOnlyUserCount = countUsersByVisibility(mockPresenceUsers, 'matches-only');
+  const hiddenUserCount = countUsersByVisibility(mockPresenceUsers, 'hidden');
+  const matchedUserCount = countMatchedUsers(mockPresenceUsers);
 
-  const filteredUsers =
-    visibilityFilter === 'all'
-      ? mockPresenceUsers
-      : mockPresenceUsers.filter((user) => user.visibility === visibilityFilter);
+  const filteredUsers = filterUsersByVisibility(mockPresenceUsers, visibilityFilter);
 
   const handleModeToggle = () => {
     setCurrentMode((previousMode) => (previousMode === '2d' ? '3d' : '2d'));
