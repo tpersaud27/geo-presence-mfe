@@ -1,9 +1,27 @@
+import { useState } from 'react';
 import './App.css';
 import { mockGeoPresenceConfig } from './mock/mockGeoPresenceConfig';
 import { mockPresenceUsers } from './mock/mockPresenceUsers';
+import type { GeoPresenceMode } from './core/config/geoPresenceConfig';
+import type { PresenceUser } from './core/models/presenceUser';
 
 function App() {
-  const { mode = '2d', enableModeToggle = false, initialView } = mockGeoPresenceConfig;
+  const {
+    mode: configuredMode = '2d',
+    enableModeToggle = false,
+    initialView,
+  } = mockGeoPresenceConfig;
+
+  const [currentMode, setCurrentMode] = useState<GeoPresenceMode>(configuredMode);
+  const [selectedUser, setSelectedUser] = useState<PresenceUser | null>(null);
+
+  const handleModeToggle = () => {
+    setCurrentMode((previousMode) => (previousMode === '2d' ? '3d' : '2d'));
+  };
+
+  const handleUserSelect = (user: PresenceUser) => {
+    setSelectedUser(user);
+  };
 
   return (
     <main className="app">
@@ -16,7 +34,10 @@ function App() {
         <h2>Configuration Summary</h2>
         <ul>
           <li>
-            <strong>Mode:</strong> {mode}
+            <strong>Configured Mode:</strong> {configuredMode}
+          </li>
+          <li>
+            <strong>Current Mode:</strong> {currentMode}
           </li>
           <li>
             <strong>Mode Toggle Enabled:</strong> {enableModeToggle ? 'Yes' : 'No'}
@@ -33,7 +54,16 @@ function App() {
           <li>
             <strong>Mock Users:</strong> {mockPresenceUsers.length}
           </li>
+          <li>
+            <strong>Selected User:</strong> {selectedUser?.displayName ?? 'None'}
+          </li>
         </ul>
+
+        {enableModeToggle && (
+          <button type="button" onClick={handleModeToggle}>
+            Switch to {currentMode === '2d' ? '3D' : '2D'} Mode
+          </button>
+        )}
       </section>
 
       <section className="app__users">
@@ -41,19 +71,35 @@ function App() {
         <ul>
           {mockPresenceUsers.map((user) => (
             <li key={user.id} className="app__user-card">
-              <img src={user.avatarUrl} alt={user.displayName} className="app__avatar" />
-              <div>
-                <p>
-                  <strong>{user.displayName}</strong>
-                </p>
-                <p>ID: {user.id}</p>
-                <p>
-                  Coordinates: {user.coordinates.lat}, {user.coordinates.lon}
-                </p>
-                <p>Visibility: {user.visibility}</p>
-                <p>Match: {user.isMatch ? 'Yes' : 'No'}</p>
-                <p>Last Active: {user.lastActiveAt ?? 'Unknown'}</p>
-              </div>
+              <button
+                type="button"
+                onClick={() => handleUserSelect(user)}
+                style={{
+                  display: 'flex',
+                  gap: '16px',
+                  alignItems: 'flex-start',
+                  width: '100%',
+                  background: selectedUser?.id === user.id ? '#eef4ff' : 'transparent',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+              >
+                <img src={user.avatarUrl} alt={user.displayName} className="app__avatar" />
+                <div>
+                  <p>
+                    <strong>{user.displayName}</strong>
+                  </p>
+                  <p>ID: {user.id}</p>
+                  <p>
+                    Coordinates: {user.coordinates.lat}, {user.coordinates.lon}
+                  </p>
+                  <p>Visibility: {user.visibility}</p>
+                  <p>Match: {user.isMatch ? 'Yes' : 'No'}</p>
+                  <p>Last Active: {user.lastActiveAt ?? 'Unknown'}</p>
+                </div>
+              </button>
             </li>
           ))}
         </ul>
