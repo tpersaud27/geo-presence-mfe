@@ -5,6 +5,8 @@ import { mockPresenceUsers } from './mock/mockPresenceUsers';
 import type { GeoPresenceMode } from './core/config/geoPresenceConfig';
 import type { PresenceUser } from './core/models/presenceUser';
 
+type VisibilityFilter = 'all' | 'public' | 'matches-only' | 'hidden';
+
 function App() {
   const {
     mode: configuredMode = '2d',
@@ -14,6 +16,7 @@ function App() {
 
   const [currentMode, setCurrentMode] = useState<GeoPresenceMode>(configuredMode);
   const [selectedUser, setSelectedUser] = useState<PresenceUser | null>(null);
+  const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
 
   const totalUserCount = mockPresenceUsers.length;
   const publicUserCount = mockPresenceUsers.filter((user) => user.visibility === 'public').length;
@@ -23,12 +26,21 @@ function App() {
   const hiddenUserCount = mockPresenceUsers.filter((user) => user.visibility === 'hidden').length;
   const matchedUserCount = mockPresenceUsers.filter((user) => user.isMatch).length;
 
+  const filteredUsers =
+    visibilityFilter === 'all'
+      ? mockPresenceUsers
+      : mockPresenceUsers.filter((user) => user.visibility === visibilityFilter);
+
   const handleModeToggle = () => {
     setCurrentMode((previousMode) => (previousMode === '2d' ? '3d' : '2d'));
   };
 
   const handleUserSelect = (user: PresenceUser) => {
     setSelectedUser(user);
+  };
+
+  const handleVisibilityFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setVisibilityFilter(event.target.value as VisibilityFilter);
   };
 
   return (
@@ -75,6 +87,12 @@ function App() {
             <strong>Matched Users:</strong> {matchedUserCount}
           </li>
           <li>
+            <strong>Active Visibility Filter:</strong> {visibilityFilter}
+          </li>
+          <li>
+            <strong>Filtered User Count:</strong> {filteredUsers.length}
+          </li>
+          <li>
             <strong>Selected User:</strong> {selectedUser?.displayName ?? 'None'}
           </li>
         </ul>
@@ -84,12 +102,28 @@ function App() {
             Switch to {currentMode === '2d' ? '3D' : '2D'} Mode
           </button>
         )}
+
+        <div style={{ marginTop: '16px' }}>
+          <label htmlFor="visibility-filter">
+            <strong>Visibility Filter: </strong>
+          </label>
+          <select
+            id="visibility-filter"
+            value={visibilityFilter}
+            onChange={handleVisibilityFilterChange}
+          >
+            <option value="all">All</option>
+            <option value="public">Public</option>
+            <option value="matches-only">Matches Only</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </div>
       </section>
 
       <section className="app__users">
         <h2>Seeded Presence Users</h2>
         <ul>
-          {mockPresenceUsers.map((user) => (
+          {filteredUsers.map((user) => (
             <li key={user.id} className="app__user-card">
               <button
                 type="button"
