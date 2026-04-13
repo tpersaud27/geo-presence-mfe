@@ -12,6 +12,7 @@ import {
 import SelectedUserDetails from '../../components/SelectedUserDetails';
 import ConfigurationSummary from '../../components/ConfigurationSummary';
 import PresenceUserList from '../../components/PresenceUserList';
+import GeoPresenceRendererPanel from '../../components/GeoPresenceRendererPanel';
 
 function GeoPresenceDashboard() {
     const {
@@ -69,6 +70,8 @@ function GeoPresenceDashboard() {
                 onModeToggle={handleModeToggle}
                 onVisibilityFilterChange={handleVisibilityFilterChange}
             />
+
+            <GeoPresenceRendererPanel mode={currentMode} users={filteredUsers} />
 
             <SelectedUserDetails selectedUser={selectedUser} />
 
