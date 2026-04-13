@@ -10,6 +10,7 @@ import {
   filterUsersByVisibility,
 } from './utils/presenceUserUtils';
 import SelectedUserDetails from './components/SelectedUserDetails';
+import ConfigurationSummary from './components/ConfigurationSummary';
 
 type VisibilityFilter = 'all' | 'public' | 'matches-only' | 'hidden';
 
@@ -51,75 +52,24 @@ function App() {
         <p>Foundation setup in progress.</p>
       </section>
 
-      <section className="app__summary">
-        <h2>Configuration Summary</h2>
-        <ul>
-          <li>
-            <strong>Configured Mode:</strong> {configuredMode}
-          </li>
-          <li>
-            <strong>Current Mode:</strong> {currentMode}
-          </li>
-          <li>
-            <strong>Mode Toggle Enabled:</strong> {enableModeToggle ? 'Yes' : 'No'}
-          </li>
-          <li>
-            <strong>Initial Latitude:</strong> {initialView?.lat ?? 'Not set'}
-          </li>
-          <li>
-            <strong>Initial Longitude:</strong> {initialView?.lon ?? 'Not set'}
-          </li>
-          <li>
-            <strong>Initial Zoom:</strong> {initialView?.zoom ?? 'Not set'}
-          </li>
-          <li>
-            <strong>Total Users:</strong> {totalUserCount}
-          </li>
-          <li>
-            <strong>Public Users:</strong> {publicUserCount}
-          </li>
-          <li>
-            <strong>Matches-Only Users:</strong> {matchesOnlyUserCount}
-          </li>
-          <li>
-            <strong>Hidden Users:</strong> {hiddenUserCount}
-          </li>
-          <li>
-            <strong>Matched Users:</strong> {matchedUserCount}
-          </li>
-          <li>
-            <strong>Active Visibility Filter:</strong> {visibilityFilter}
-          </li>
-          <li>
-            <strong>Filtered User Count:</strong> {filteredUsers.length}
-          </li>
-          <li>
-            <strong>Selected User:</strong> {selectedUser?.displayName ?? 'None'}
-          </li>
-        </ul>
-
-        {enableModeToggle && (
-          <button type="button" onClick={handleModeToggle}>
-            Switch to {currentMode === '2d' ? '3D' : '2D'} Mode
-          </button>
-        )}
-
-        <div style={{ marginTop: '16px' }}>
-          <label htmlFor="visibility-filter">
-            <strong>Visibility Filter: </strong>
-          </label>
-          <select
-            id="visibility-filter"
-            value={visibilityFilter}
-            onChange={handleVisibilityFilterChange}
-          >
-            <option value="all">All</option>
-            <option value="public">Public</option>
-            <option value="matches-only">Matches Only</option>
-            <option value="hidden">Hidden</option>
-          </select>
-        </div>
-      </section>
+      <ConfigurationSummary
+        configuredMode={configuredMode}
+        currentMode={currentMode}
+        enableModeToggle={enableModeToggle}
+        initialLatitude={initialView?.lat}
+        initialLongitude={initialView?.lon}
+        initialZoom={initialView?.zoom}
+        totalUserCount={totalUserCount}
+        publicUserCount={publicUserCount}
+        matchesOnlyUserCount={matchesOnlyUserCount}
+        hiddenUserCount={hiddenUserCount}
+        matchedUserCount={matchedUserCount}
+        visibilityFilter={visibilityFilter}
+        filteredUserCount={filteredUsers.length}
+        selectedUserName={selectedUser?.displayName}
+        onModeToggle={handleModeToggle}
+        onVisibilityFilterChange={handleVisibilityFilterChange}
+      />
 
       <SelectedUserDetails selectedUser={selectedUser} />
 
