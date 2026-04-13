@@ -38,6 +38,7 @@ function GeoPresenceRendererPanel({
             <div className="app__renderer-surface">
                 {is2DMode ? (
                     <Map2DRenderer
+                        users={users}
                         tileUrlTemplate={tileUrlTemplate}
                         initialLatitude={initialLatitude}
                         initialLongitude={initialLongitude}
