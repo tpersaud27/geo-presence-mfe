@@ -4,6 +4,7 @@ import { mockGeoPresenceConfig } from './mock/mockGeoPresenceConfig';
 import { mockPresenceUsers } from './mock/mockPresenceUsers';
 import type { GeoPresenceMode } from './core/config/geoPresenceConfig';
 import type { PresenceUser } from './core/models/presenceUser';
+import type { VisibilityFilter } from './core/models/visibilityFilter';
 import {
   countMatchedUsers,
   countUsersByVisibility,
@@ -12,8 +13,6 @@ import {
 import SelectedUserDetails from './components/SelectedUserDetails';
 import ConfigurationSummary from './components/ConfigurationSummary';
 import PresenceUserList from './components/PresenceUserList';
-
-type VisibilityFilter = 'all' | 'public' | 'matches-only' | 'hidden';
 
 function App() {
   const {
