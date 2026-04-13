@@ -78,6 +78,40 @@ body {
   flex: 1;
 }
 
+.app__renderer-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.app__renderer-header {
+  margin-bottom: 16px;
+}
+
+.app__renderer-header p {
+  margin: 4px 0;
+}
+
+.app__renderer-surface {
+  min-height: 420px;
+  border: 1px dashed #bcccdc;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.app__renderer-placeholder {
+  max-width: 420px;
+  text-align: center;
+  color: #334e68;
+}
+
+.app__renderer-placeholder p {
+  margin: 8px 0;
+}
+
 .app__user-card {
   display: flex;
   gap: 16px;
@@ -111,5 +145,9 @@ body {
   .app__renderer-column,
   .app__details-column {
     width: 100%;
+  }
+
+  .app__renderer-surface {
+    min-height: 320px;
   }
 }
