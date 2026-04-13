@@ -86,6 +86,7 @@ function GeoPresenceDashboard() {
                         initialLatitude={initialLatitude}
                         initialLongitude={initialLongitude}
                         initialZoom={initialZoom}
+                        onUserSelect={handleUserSelect}
                     />
                 </div>
 

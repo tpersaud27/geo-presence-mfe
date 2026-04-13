@@ -9,6 +9,7 @@ interface Map2DRendererProps {
     initialLatitude: number;
     initialLongitude: number;
     initialZoom: number;
+    onUserSelect: (user: PresenceUser) => void;
 }
 
 function Map2DRenderer({
@@ -17,6 +18,7 @@ function Map2DRenderer({
     initialLatitude,
     initialLongitude,
     initialZoom,
+    onUserSelect,
 }: Map2DRendererProps) {
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const mapInstanceRef = useRef<maplibregl.Map | null>(null);
@@ -75,7 +77,17 @@ function Map2DRenderer({
         markerInstancesRef.current = [];
 
         const nextMarkers = users.map((user) => {
-            const marker = new maplibregl.Marker()
+            const markerElement = document.createElement('button');
+            markerElement.type = 'button';
+            markerElement.className = 'app__map-marker';
+            markerElement.title = user.displayName;
+            markerElement.setAttribute('aria-label', `Select ${user.displayName}`);
+
+            markerElement.addEventListener('click', () => {
+                onUserSelect(user);
+            });
+
+            const marker = new maplibregl.Marker({ element: markerElement })
                 .setLngLat([user.coordinates.lon, user.coordinates.lat])
                 .addTo(map);
 
@@ -83,7 +95,7 @@ function Map2DRenderer({
         });
 
         markerInstancesRef.current = nextMarkers;
-    }, [users]);
+    }, [users, onUserSelect]);
 
     return <div ref={mapContainerRef} className="app__map-container" />;
 }

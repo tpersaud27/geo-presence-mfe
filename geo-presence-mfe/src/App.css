@@ -145,6 +145,18 @@ body {
   overflow: hidden;
 }
 
+.app__map-marker {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  background-color: #2563eb;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.35);
+  cursor: pointer;
+  padding: 0;
+}
+
+
 
 @media (max-width: 900px) {
   .app__main-content {

@@ -9,6 +9,7 @@ interface GeoPresenceRendererPanelProps {
     initialLatitude: number;
     initialLongitude: number;
     initialZoom: number;
+    onUserSelect: (user: PresenceUser) => void;
 }
 
 function GeoPresenceRendererPanel({
@@ -18,6 +19,7 @@ function GeoPresenceRendererPanel({
     initialLatitude,
     initialLongitude,
     initialZoom,
+    onUserSelect,
 }: GeoPresenceRendererPanelProps) {
     const is2DMode = mode === '2d';
 
@@ -43,6 +45,7 @@ function GeoPresenceRendererPanel({
                         initialLatitude={initialLatitude}
                         initialLongitude={initialLongitude}
                         initialZoom={initialZoom}
+                        onUserSelect={onUserSelect}
                     />
                 ) : (
                     <div className="app__renderer-placeholder">
