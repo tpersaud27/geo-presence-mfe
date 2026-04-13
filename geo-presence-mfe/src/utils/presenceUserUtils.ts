@@ -1,4 +1,5 @@
 import type { PresenceUser, PresenceVisibility } from '../core/models/presenceUser';
+import type { VisibilityFilter } from '../core/models/visibilityFilter';
 
 export function countUsersByVisibility(
   users: PresenceUser[],
@@ -13,7 +14,7 @@ export function countMatchedUsers(users: PresenceUser[]): number {
 
 export function filterUsersByVisibility(
   users: PresenceUser[],
-  visibilityFilter: 'all' | PresenceVisibility
+  visibilityFilter: VisibilityFilter
 ): PresenceUser[] {
   if (visibilityFilter === 'all') {
     return users;
