@@ -1,0 +1,84 @@
+import { useState } from 'react';
+import { mockGeoPresenceConfig } from '../../mock/mockGeoPresenceConfig';
+import { mockPresenceUsers } from '../../mock/mockPresenceUsers';
+import type { GeoPresenceMode } from '../../core/config/geoPresenceConfig';
+import type { PresenceUser } from '../../core/models/presenceUser';
+import type { VisibilityFilter } from '../../core/models/visibilityFilter';
+import {
+    countMatchedUsers,
+    countUsersByVisibility,
+    filterUsersByVisibility,
+} from '../../utils/presenceUserUtils';
+import SelectedUserDetails from '../../components/SelectedUserDetails';
+import ConfigurationSummary from '../../components/ConfigurationSummary';
+import PresenceUserList from '../../components/PresenceUserList';
+
+function GeoPresenceDashboard() {
+    const {
+        mode: configuredMode = '2d',
+        enableModeToggle = false,
+        initialView,
+    } = mockGeoPresenceConfig;
+
+    const [currentMode, setCurrentMode] = useState<GeoPresenceMode>(configuredMode);
+    const [selectedUser, setSelectedUser] = useState<PresenceUser | null>(null);
+    const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
+
+    const totalUserCount = mockPresenceUsers.length;
+    const publicUserCount = countUsersByVisibility(mockPresenceUsers, 'public');
+    const matchesOnlyUserCount = countUsersByVisibility(mockPresenceUsers, 'matches-only');
+    const hiddenUserCount = countUsersByVisibility(mockPresenceUsers, 'hidden');
+    const matchedUserCount = countMatchedUsers(mockPresenceUsers);
+
+    const filteredUsers = filterUsersByVisibility(mockPresenceUsers, visibilityFilter);
+
+    const handleModeToggle = () => {
+        setCurrentMode((previousMode) => (previousMode === '2d' ? '3d' : '2d'));
+    };
+
+    const handleUserSelect = (user: PresenceUser) => {
+        setSelectedUser(user);
+    };
+
+    const handleVisibilityFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setVisibilityFilter(event.target.value as VisibilityFilter);
+    };
+
+    return (
+        <main className="app">
+            <section className="app__header">
+                <h1>geo-presence-mfe</h1>
+                <p>Foundation setup in progress.</p>
+            </section>
+
+            <ConfigurationSummary
+                configuredMode={configuredMode}
+                currentMode={currentMode}
+                enableModeToggle={enableModeToggle}
+                initialLatitude={initialView?.lat}
+                initialLongitude={initialView?.lon}
+                initialZoom={initialView?.zoom}
+                totalUserCount={totalUserCount}
+                publicUserCount={publicUserCount}
+                matchesOnlyUserCount={matchesOnlyUserCount}
+                hiddenUserCount={hiddenUserCount}
+                matchedUserCount={matchedUserCount}
+                visibilityFilter={visibilityFilter}
+                filteredUserCount={filteredUsers.length}
+                selectedUserName={selectedUser?.displayName}
+                onModeToggle={handleModeToggle}
+                onVisibilityFilterChange={handleVisibilityFilterChange}
+            />
+
+            <SelectedUserDetails selectedUser={selectedUser} />
+
+            <PresenceUserList
+                users={filteredUsers}
+                selectedUser={selectedUser}
+                onUserSelect={handleUserSelect}
+            />
+        </main>
+    );
+}
+
+export default GeoPresenceDashboard;
