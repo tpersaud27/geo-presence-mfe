@@ -71,9 +71,15 @@ function GeoPresenceDashboard() {
                 onVisibilityFilterChange={handleVisibilityFilterChange}
             />
 
-            <GeoPresenceRendererPanel mode={currentMode} users={filteredUsers} />
+            <section className="app__main-content">
+                <div className="app__renderer-column">
+                    <GeoPresenceRendererPanel mode={currentMode} users={filteredUsers} />
+                </div>
 
-            <SelectedUserDetails selectedUser={selectedUser} />
+                <div className="app__details-column">
+                    <SelectedUserDetails selectedUser={selectedUser} />
+                </div>
+            </section>
 
             <PresenceUserList
                 users={filteredUsers}

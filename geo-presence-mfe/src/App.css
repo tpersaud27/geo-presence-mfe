@@ -63,6 +63,21 @@ body {
   border-bottom: none;
 }
 
+.app__main-content {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.app__renderer-column {
+  flex: 2;
+}
+
+.app__details-column {
+  flex: 1;
+}
+
 .app__user-card {
   display: flex;
   gap: 16px;
@@ -86,4 +101,15 @@ body {
 
 .app__user-card p {
   margin: 4px 0;
+}
+
+@media (max-width: 900px) {
+  .app__main-content {
+    flex-direction: column;
+  }
+
+  .app__renderer-column,
+  .app__details-column {
+    width: 100%;
+  }
 }
