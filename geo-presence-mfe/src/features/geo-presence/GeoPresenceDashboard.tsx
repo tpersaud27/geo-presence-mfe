@@ -19,6 +19,7 @@ function GeoPresenceDashboard() {
         mode: configuredMode = '2d',
         enableModeToggle = false,
         initialView,
+        providers,
     } = mockGeoPresenceConfig;
 
     const [currentMode, setCurrentMode] = useState<GeoPresenceMode>(configuredMode);
@@ -32,6 +33,11 @@ function GeoPresenceDashboard() {
     const matchedUserCount = countMatchedUsers(mockPresenceUsers);
 
     const filteredUsers = filterUsersByVisibility(mockPresenceUsers, visibilityFilter);
+
+    const initialLatitude = initialView?.lat ?? 39.5;
+    const initialLongitude = initialView?.lon ?? -98.35;
+    const initialZoom = initialView?.zoom ?? 3;
+    const tileUrlTemplate = providers.map2d.tileUrlTemplate;
 
     const handleModeToggle = () => {
         setCurrentMode((previousMode) => (previousMode === '2d' ? '3d' : '2d'));
@@ -56,9 +62,9 @@ function GeoPresenceDashboard() {
                 configuredMode={configuredMode}
                 currentMode={currentMode}
                 enableModeToggle={enableModeToggle}
-                initialLatitude={initialView?.lat}
-                initialLongitude={initialView?.lon}
-                initialZoom={initialView?.zoom}
+                initialLatitude={initialLatitude}
+                initialLongitude={initialLongitude}
+                initialZoom={initialZoom}
                 totalUserCount={totalUserCount}
                 publicUserCount={publicUserCount}
                 matchesOnlyUserCount={matchesOnlyUserCount}
@@ -73,7 +79,14 @@ function GeoPresenceDashboard() {
 
             <section className="app__main-content">
                 <div className="app__renderer-column">
-                    <GeoPresenceRendererPanel mode={currentMode} users={filteredUsers} />
+                    <GeoPresenceRendererPanel
+                        mode={currentMode}
+                        users={filteredUsers}
+                        tileUrlTemplate={tileUrlTemplate}
+                        initialLatitude={initialLatitude}
+                        initialLongitude={initialLongitude}
+                        initialZoom={initialZoom}
+                    />
                 </div>
 
                 <div className="app__details-column">

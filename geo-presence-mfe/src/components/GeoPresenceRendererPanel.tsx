@@ -1,23 +1,25 @@
 import type { GeoPresenceMode } from '../core/config/geoPresenceConfig';
 import type { PresenceUser } from '../core/models/presenceUser';
 import Map2DRenderer from './Map2DRenderer';
-import { mockGeoPresenceConfig } from '../mock/mockGeoPresenceConfig';
 
 interface GeoPresenceRendererPanelProps {
     mode: GeoPresenceMode;
     users: PresenceUser[];
+    tileUrlTemplate: string;
+    initialLatitude: number;
+    initialLongitude: number;
+    initialZoom: number;
 }
 
 function GeoPresenceRendererPanel({
     mode,
     users,
+    tileUrlTemplate,
+    initialLatitude,
+    initialLongitude,
+    initialZoom,
 }: GeoPresenceRendererPanelProps) {
     const is2DMode = mode === '2d';
-    const initialLatitude = mockGeoPresenceConfig.initialView?.lat ?? 39.5;
-    const initialLongitude = mockGeoPresenceConfig.initialView?.lon ?? -98.35;
-    const initialZoom = mockGeoPresenceConfig.initialView?.zoom ?? 3;
-    const tileUrlTemplate =
-        mockGeoPresenceConfig.providers.map2d.tileUrlTemplate;
 
     return (
         <section className="app__summary app__renderer-panel">
