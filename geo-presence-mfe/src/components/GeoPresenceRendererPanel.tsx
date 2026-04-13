@@ -1,5 +1,7 @@
 import type { GeoPresenceMode } from '../core/config/geoPresenceConfig';
 import type { PresenceUser } from '../core/models/presenceUser';
+import Map2DRenderer from './Map2DRenderer';
+import { mockGeoPresenceConfig } from '../mock/mockGeoPresenceConfig';
 
 interface GeoPresenceRendererPanelProps {
     mode: GeoPresenceMode;
@@ -11,6 +13,11 @@ function GeoPresenceRendererPanel({
     users,
 }: GeoPresenceRendererPanelProps) {
     const is2DMode = mode === '2d';
+    const initialLatitude = mockGeoPresenceConfig.initialView?.lat ?? 39.5;
+    const initialLongitude = mockGeoPresenceConfig.initialView?.lon ?? -98.35;
+    const initialZoom = mockGeoPresenceConfig.initialView?.zoom ?? 3;
+    const tileUrlTemplate =
+        mockGeoPresenceConfig.providers.map2d.tileUrlTemplate;
 
     return (
         <section className="app__summary app__renderer-panel">
@@ -28,10 +35,12 @@ function GeoPresenceRendererPanel({
 
             <div className="app__renderer-surface">
                 {is2DMode ? (
-                    <div className="app__renderer-placeholder">
-                        <p>MapLibre-based 2D renderer will be shown here.</p>
-                        <p>This surface will eventually render map tiles, markers, and user interactions.</p>
-                    </div>
+                    <Map2DRenderer
+                        tileUrlTemplate={tileUrlTemplate}
+                        initialLatitude={initialLatitude}
+                        initialLongitude={initialLongitude}
+                        initialZoom={initialZoom}
+                    />
                 ) : (
                     <div className="app__renderer-placeholder">
                         <p>Cesium-based 3D globe renderer will be shown here.</p>

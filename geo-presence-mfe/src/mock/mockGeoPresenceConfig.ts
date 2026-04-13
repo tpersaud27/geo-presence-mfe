@@ -14,7 +14,7 @@ export const mockGeoPresenceConfig: GeoPresenceConfig = {
 
   providers: {
     map2d: {
-      tileUrlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      tileUrlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution: '© OpenStreetMap contributors',
     },
     globe3d: {
