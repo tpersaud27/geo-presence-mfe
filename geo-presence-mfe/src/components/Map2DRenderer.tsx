@@ -5,6 +5,7 @@ import type { PresenceUser } from '../core/models/presenceUser';
 
 interface Map2DRendererProps {
     users: PresenceUser[];
+    selectedUser: PresenceUser | null;
     tileUrlTemplate: string;
     initialLatitude: number;
     initialLongitude: number;
@@ -14,6 +15,7 @@ interface Map2DRendererProps {
 
 function Map2DRenderer({
     users,
+    selectedUser,
     tileUrlTemplate,
     initialLatitude,
     initialLongitude,
@@ -77,9 +79,13 @@ function Map2DRenderer({
         markerInstancesRef.current = [];
 
         const nextMarkers = users.map((user) => {
+            const isSelected = selectedUser?.id === user.id;
+
             const markerElement = document.createElement('button');
             markerElement.type = 'button';
-            markerElement.className = 'app__map-marker';
+            markerElement.className = isSelected
+                ? 'app__map-marker app__map-marker--selected'
+                : 'app__map-marker';
             markerElement.title = user.displayName;
             markerElement.setAttribute('aria-label', `Select ${user.displayName}`);
 
@@ -95,7 +101,7 @@ function Map2DRenderer({
         });
 
         markerInstancesRef.current = nextMarkers;
-    }, [users, onUserSelect]);
+    }, [users, selectedUser, onUserSelect]);
 
     return <div ref={mapContainerRef} className="app__map-container" />;
 }

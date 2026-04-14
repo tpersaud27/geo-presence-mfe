@@ -82,6 +82,7 @@ function GeoPresenceDashboard() {
                     <GeoPresenceRendererPanel
                         mode={currentMode}
                         users={filteredUsers}
+                        selectedUser={selectedUser}
                         tileUrlTemplate={tileUrlTemplate}
                         initialLatitude={initialLatitude}
                         initialLongitude={initialLongitude}

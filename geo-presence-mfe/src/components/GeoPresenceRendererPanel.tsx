@@ -5,6 +5,7 @@ import Map2DRenderer from './Map2DRenderer';
 interface GeoPresenceRendererPanelProps {
     mode: GeoPresenceMode;
     users: PresenceUser[];
+    selectedUser: PresenceUser | null;
     tileUrlTemplate: string;
     initialLatitude: number;
     initialLongitude: number;
@@ -15,6 +16,7 @@ interface GeoPresenceRendererPanelProps {
 function GeoPresenceRendererPanel({
     mode,
     users,
+    selectedUser,
     tileUrlTemplate,
     initialLatitude,
     initialLongitude,
@@ -41,6 +43,7 @@ function GeoPresenceRendererPanel({
                 {is2DMode ? (
                     <Map2DRenderer
                         users={users}
+                        selectedUser={selectedUser}
                         tileUrlTemplate={tileUrlTemplate}
                         initialLatitude={initialLatitude}
                         initialLongitude={initialLongitude}

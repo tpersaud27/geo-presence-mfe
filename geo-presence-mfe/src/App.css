@@ -154,7 +154,19 @@ body {
   box-shadow: 0 1px 4px rgba(15, 23, 42, 0.35);
   cursor: pointer;
   padding: 0;
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
+
+.app__map-marker:hover {
+  transform: scale(1.1);
+}
+
+.app__map-marker--selected {
+  background-color: #f97316;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.25);
+  transform: scale(1.15);
+}
+
 
 
 
