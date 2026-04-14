@@ -10,9 +10,10 @@ import {
     filterUsersByVisibility,
 } from '../../utils/presenceUserUtils';
 import SelectedUserDetails from '../../components/SelectedUserDetails';
-import ConfigurationSummary from '../../components/ConfigurationSummary';
 import PresenceUserList from '../../components/PresenceUserList';
 import GeoPresenceRendererPanel from '../../components/GeoPresenceRendererPanel';
+import GeoPresenceControls from '../../components/GeoPresenceControls';
+import GeoPresenceSummary from '../../components/GeoPresenceSummary';
 
 function GeoPresenceDashboard() {
     const {
@@ -112,36 +113,25 @@ function GeoPresenceDashboard() {
                 <p>Foundation setup in progress.</p>
             </section>
 
-            <ConfigurationSummary
-                configuredMode={configuredMode}
-                currentMode={currentMode}
-                enableModeToggle={enableModeToggle}
-                initialLatitude={initialLatitude}
-                initialLongitude={initialLongitude}
-                initialZoom={initialZoom}
-                totalUserCount={totalUserCount}
-                publicUserCount={publicUserCount}
-                matchesOnlyUserCount={matchesOnlyUserCount}
-                hiddenUserCount={hiddenUserCount}
-                matchedUserCount={matchedUserCount}
-                visibilityFilter={visibilityFilter}
-                filteredUserCount={filteredUsers.length}
-                selectedUserName={selectedUser?.displayName}
-                searchTerm={searchTerm}
-                showMatchedOnly={showMatchedOnly}
-                showOnlineOnly={showOnlineOnly}
-                autoScrollToSelectedUser={autoScrollToSelectedUser}
-                onModeToggle={handleModeToggle}
-                onVisibilityFilterChange={handleVisibilityFilterChange}
-                onSearchTermChange={handleSearchTermChange}
-                onClearSearch={handleClearSearch}
-                onShowMatchedOnlyChange={handleShowMatchedOnlyChange}
-                onShowOnlineOnlyChange={handleShowOnlineOnlyChange}
-                onAutoScrollToSelectedUserChange={handleAutoScrollToSelectedUserChange}
-            />
-
             <section className="app__main-content">
                 <div className="app__renderer-column">
+                    <GeoPresenceControls
+                        currentMode={currentMode}
+                        enableModeToggle={enableModeToggle}
+                        visibilityFilter={visibilityFilter}
+                        searchTerm={searchTerm}
+                        showMatchedOnly={showMatchedOnly}
+                        showOnlineOnly={showOnlineOnly}
+                        autoScrollToSelectedUser={autoScrollToSelectedUser}
+                        onModeToggle={handleModeToggle}
+                        onVisibilityFilterChange={handleVisibilityFilterChange}
+                        onSearchTermChange={handleSearchTermChange}
+                        onClearSearch={handleClearSearch}
+                        onShowMatchedOnlyChange={handleShowMatchedOnlyChange}
+                        onShowOnlineOnlyChange={handleShowOnlineOnlyChange}
+                        onAutoScrollToSelectedUserChange={handleAutoScrollToSelectedUserChange}
+                    />
+
                     <GeoPresenceRendererPanel
                         mode={currentMode}
                         users={filteredUsers}
@@ -155,6 +145,26 @@ function GeoPresenceDashboard() {
                 </div>
 
                 <div className="app__details-column">
+                    <GeoPresenceSummary
+                        configuredMode={configuredMode}
+                        currentMode={currentMode}
+                        initialLatitude={initialLatitude}
+                        initialLongitude={initialLongitude}
+                        initialZoom={initialZoom}
+                        totalUserCount={totalUserCount}
+                        publicUserCount={publicUserCount}
+                        matchesOnlyUserCount={matchesOnlyUserCount}
+                        hiddenUserCount={hiddenUserCount}
+                        matchedUserCount={matchedUserCount}
+                        visibilityFilter={visibilityFilter}
+                        filteredUserCount={filteredUsers.length}
+                        selectedUserName={selectedUser?.displayName}
+                        searchTerm={searchTerm}
+                        showMatchedOnly={showMatchedOnly}
+                        showOnlineOnly={showOnlineOnly}
+                        autoScrollToSelectedUser={autoScrollToSelectedUser}
+                    />
+
                     <SelectedUserDetails selectedUser={selectedUser} />
                 </div>
             </section>
