@@ -208,6 +208,126 @@ body {
   color: #64748b;
 }
 
+.app__controls-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.app__control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.app__control-label {
+  font-weight: 600;
+  color: #102a43;
+}
+
+.app__control-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.app__control-input,
+.app__control-select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1f2933;
+  background: #ffffff;
+}
+
+.app__control-input {
+  flex: 1;
+  min-width: 220px;
+}
+
+.app__control-input:focus,
+.app__control-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.app__control-button {
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #102a43;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.app__control-button:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.app__control-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.app__checkbox-group {
+  display: grid;
+  gap: 12px;
+}
+
+.app__checkbox-label {
+  color: #334e68;
+}
+
+.app__suggestions {
+  margin-top: 8px;
+  border: 1px solid #d9e2ec;
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+}
+
+.app__suggestion-button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #e9eef5;
+  color: #102a43;
+  cursor: pointer;
+}
+
+.app__suggestion-button:last-child {
+  border-bottom: none;
+}
+
+.app__suggestion-button:hover {
+  background: #f8fbff;
+}
+
+.app__helper-text {
+  margin: 0;
+  font-size: 14px;
+  color: #486581;
+}
+
+.app__error-text {
+  margin: 0;
+  font-size: 14px;
+  color: #b42318;
+}
+
+
 @media (max-width: 900px) {
   .app__main-content {
     flex-direction: column;
