@@ -315,6 +315,11 @@ body {
   background: #f8fbff;
 }
 
+.app__suggestion-button--active {
+  background: #eef4ff;
+}
+
+
 .app__helper-text {
   margin: 0;
   font-size: 14px;

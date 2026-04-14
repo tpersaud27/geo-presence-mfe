@@ -9,6 +9,7 @@ interface GeoPresenceControlsProps {
     searchTerm: string;
     placeSearchTerm: string;
     placeSuggestions: MapSearchTarget[];
+    activePlaceSuggestionIndex: number;
     placeSearchError: string | null;
     placeSearchMessage: string | null;
     showMatchedOnly: boolean;
@@ -36,6 +37,7 @@ function GeoPresenceControls({
     searchTerm,
     placeSearchTerm,
     placeSuggestions,
+    activePlaceSuggestionIndex,
     placeSearchError,
     placeSearchMessage,
     showMatchedOnly,
@@ -108,12 +110,16 @@ function GeoPresenceControls({
                     </div>
 
                     {placeSuggestions.length > 0 && (
-                        <div className="app__suggestions">
-                            {placeSuggestions.map((suggestion) => (
+                        <div className="app__suggestions" role="listbox" aria-label="Location suggestions">
+                            {placeSuggestions.map((suggestion, index) => (
                                 <button
                                     key={`${suggestion.label}-${suggestion.lat}-${suggestion.lon}`}
                                     type="button"
-                                    className="app__suggestion-button"
+                                    className={
+                                        index === activePlaceSuggestionIndex
+                                            ? 'app__suggestion-button app__suggestion-button--active'
+                                            : 'app__suggestion-button'
+                                    }
                                     onClick={() => onSelectPlaceSuggestion(suggestion)}
                                 >
                                     {suggestion.label}

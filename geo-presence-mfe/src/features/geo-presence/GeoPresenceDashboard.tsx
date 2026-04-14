@@ -31,6 +31,7 @@ function GeoPresenceDashboard() {
     const [searchTerm, setSearchTerm] = useState('');
     const [placeSearchTerm, setPlaceSearchTerm] = useState('');
     const [placeSuggestions, setPlaceSuggestions] = useState<MapSearchTarget[]>([]);
+    const [activePlaceSuggestionIndex, setActivePlaceSuggestionIndex] = useState(-1);
     const [mapSearchTarget, setMapSearchTarget] = useState<MapSearchTarget | null>(null);
     const [isPlaceSearchLoading, setIsPlaceSearchLoading] = useState(false);
     const [placeSearchError, setPlaceSearchError] = useState<string | null>(null);
@@ -90,6 +91,7 @@ function GeoPresenceDashboard() {
 
         if (trimmed.length < 2) {
             setPlaceSuggestions([]);
+            setActivePlaceSuggestionIndex(-1);
             setPlaceSearchError(null);
             return;
         }
@@ -98,10 +100,12 @@ function GeoPresenceDashboard() {
             try {
                 const suggestions = await searchPlaceSuggestions(geocodingSearchUrl, trimmed);
                 setPlaceSuggestions(suggestions);
+                setActivePlaceSuggestionIndex(-1);
                 setPlaceSearchError(null);
             } catch (error) {
                 console.error('Place suggestion search failed', error);
                 setPlaceSuggestions([]);
+                setActivePlaceSuggestionIndex(-1);
                 setPlaceSearchError('Unable to load location suggestions right now.');
             }
         }, 300);
@@ -161,6 +165,7 @@ function GeoPresenceDashboard() {
             setMapSearchTarget(result);
             setSelectedUser(null);
             setPlaceSuggestions([]);
+            setActivePlaceSuggestionIndex(-1);
             setPlaceSearchMessage(`Showing map results for ${result.label}`);
         } catch (error) {
             console.error('Place search failed', error);
@@ -173,6 +178,7 @@ function GeoPresenceDashboard() {
     const handleClearPlaceSearch = () => {
         setPlaceSearchTerm('');
         setPlaceSuggestions([]);
+        setActivePlaceSuggestionIndex(-1);
         setMapSearchTarget(null);
         setPlaceSearchError(null);
         setPlaceSearchMessage(null);
@@ -181,6 +187,7 @@ function GeoPresenceDashboard() {
     const handleSelectPlaceSuggestion = (target: MapSearchTarget) => {
         setPlaceSearchTerm(target.label);
         setPlaceSuggestions([]);
+        setActivePlaceSuggestionIndex(-1);
         setMapSearchTarget(target);
         setSelectedUser(null);
         setPlaceSearchError(null);
@@ -188,8 +195,49 @@ function GeoPresenceDashboard() {
     };
 
     const handlePlaceSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+
+            if (!placeSuggestions.length) {
+                return;
+            }
+
+            setActivePlaceSuggestionIndex((previousIndex) =>
+                previousIndex < placeSuggestions.length - 1 ? previousIndex + 1 : previousIndex
+            );
+            return;
+        }
+
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+
+            if (!placeSuggestions.length) {
+                return;
+            }
+
+            setActivePlaceSuggestionIndex((previousIndex) =>
+                previousIndex > 0 ? previousIndex - 1 : 0
+            );
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            setPlaceSuggestions([]);
+            setActivePlaceSuggestionIndex(-1);
+            return;
+        }
+
         if (event.key === 'Enter') {
             event.preventDefault();
+
+            if (
+                activePlaceSuggestionIndex >= 0 &&
+                activePlaceSuggestionIndex < placeSuggestions.length
+            ) {
+                handleSelectPlaceSuggestion(placeSuggestions[activePlaceSuggestionIndex]);
+                return;
+            }
+
             void handleSubmitPlaceSearch();
         }
     };
@@ -224,6 +272,7 @@ function GeoPresenceDashboard() {
                         searchTerm={searchTerm}
                         placeSearchTerm={placeSearchTerm}
                         placeSuggestions={placeSuggestions}
+                        activePlaceSuggestionIndex={activePlaceSuggestionIndex}
                         placeSearchError={placeSearchError}
                         placeSearchMessage={placeSearchMessage}
                         showMatchedOnly={showMatchedOnly}
