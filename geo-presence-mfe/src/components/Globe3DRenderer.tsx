@@ -101,4 +101,49 @@ function Globe3DRenderer({
                 ),
                 orientation: {
                     heading: 0,
+                    pitch: CesiumMath.toRadians(-45),
+                    roll: 0,
+                },
+                duration: 1.2,
+            });
+            return;
+        }
 
+        if (selectedUser) {
+            viewer.camera.flyTo({
+                destination: Cartesian3.fromDegrees(
+                    selectedUser.coordinates.lon,
+                    selectedUser.coordinates.lat,
+                    900000
+                ),
+                orientation: {
+                    heading: 0,
+                    pitch: CesiumMath.toRadians(-45),
+                    roll: 0,
+                },
+                duration: 1.2,
+            });
+            return;
+        }
+
+        const height = Math.max(1500000, 12000000 / Math.max(initialZoom, 1));
+
+        viewer.camera.flyTo({
+            destination: Cartesian3.fromDegrees(
+                initialLongitude,
+                initialLatitude,
+                height
+            ),
+            orientation: {
+                heading: 0,
+                pitch: CesiumMath.toRadians(-45),
+                roll: 0,
+            },
+            duration: 1.2,
+        });
+    }, [mapSearchTarget, selectedUser, initialLatitude, initialLongitude, initialZoom]);
+
+    return <div ref={containerRef} className="app__globe-container" />;
+}
+
+export default Globe3DRenderer;
