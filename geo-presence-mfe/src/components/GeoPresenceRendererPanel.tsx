@@ -12,6 +12,7 @@ interface GeoPresenceRendererPanelProps {
     initialLongitude: number;
     initialZoom: number;
     mapSearchTarget: MapSearchTarget | null;
+    onClearMapSearchTarget: () => void;
     onUserSelect: (user: PresenceUser) => void;
 }
 
@@ -24,6 +25,7 @@ function GeoPresenceRendererPanel({
     initialLongitude,
     initialZoom,
     mapSearchTarget,
+    onClearMapSearchTarget,
     onUserSelect,
 }: GeoPresenceRendererPanelProps) {
     const is2DMode = mode === '2d';
@@ -41,6 +43,23 @@ function GeoPresenceRendererPanel({
                     </p>
                 </div>
             </div>
+
+            {mapSearchTarget && (
+                <div className="app__active-map-search">
+                    <div className="app__active-map-search-content">
+                        <span className="app__active-map-search-label">Viewing location:</span>
+                        <span className="app__active-map-search-value">{mapSearchTarget.label}</span>
+                    </div>
+
+                    <button
+                        type="button"
+                        className="app__control-button"
+                        onClick={onClearMapSearchTarget}
+                    >
+                        Clear Location
+                    </button>
+                </div>
+            )}
 
             <div className="app__renderer-surface">
                 {is2DMode ? (

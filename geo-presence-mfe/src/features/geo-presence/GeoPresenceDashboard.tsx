@@ -302,6 +302,7 @@ function GeoPresenceDashboard() {
                         initialLongitude={initialLongitude}
                         initialZoom={initialZoom}
                         mapSearchTarget={mapSearchTarget}
+                        onClearMapSearchTarget={handleClearPlaceSearch}
                         onUserSelect={handleUserSelect}
                     />
                 </div>
