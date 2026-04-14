@@ -80,6 +80,7 @@ function GeoPresenceRendererPanel({
                         initialLatitude={initialLatitude}
                         initialLongitude={initialLongitude}
                         initialZoom={initialZoom}
+                        users={users}
                         selectedUser={selectedUser}
                         mapSearchTarget={mapSearchTarget}
                     />
