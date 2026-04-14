@@ -1,5 +1,5 @@
 import "./App.css";
-import GeoPresenceDashboard from "./features/geo-presence/GeoPresenceDashboard";
+import GeoPresenceFeature from "./features/geo-presence/GeoPresenceFeature";
 import { mockGeoPresenceConfig } from "./mock/mockGeoPresenceConfig";
 import { mockPresenceUsers } from "./mock/mockPresenceUsers";
 import type { GeoPresenceMode } from "./core/config/geoPresenceConfig";
@@ -20,7 +20,7 @@ function App() {
   };
 
   return (
-    <GeoPresenceDashboard
+    <GeoPresenceFeature
       config={mockGeoPresenceConfig}
       users={mockPresenceUsers}
       onUserSelected={handleUserSelected}

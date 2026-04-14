@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import type {
-  GeoPresenceConfig,
-  GeoPresenceMode,
-} from "../../core/config/geoPresenceConfig";
+import type { GeoPresenceMode } from "../../core/config/geoPresenceConfig";
 import type { PresenceUser } from "../../core/models/presenceUser";
 import type { VisibilityFilter } from "../../core/models/visibilityFilter";
 import type { MapSearchTarget } from "../../core/models/mapSearchTarget";
@@ -20,14 +17,7 @@ import PresenceUserList from "../../components/PresenceUserList";
 import GeoPresenceRendererPanel from "../../components/GeoPresenceRendererPanel";
 import GeoPresenceControls from "../../components/GeoPresenceControls";
 import GeoPresenceSummary from "../../components/GeoPresenceSummary";
-
-interface GeoPresenceDashboardProps {
-  config: GeoPresenceConfig;
-  users: PresenceUser[];
-  onUserSelected?: (user: PresenceUser) => void;
-  onModeChanged?: (mode: GeoPresenceMode) => void;
-  onLocationSearched?: (target: MapSearchTarget) => void;
-}
+import type { GeoPresenceFeatureProps } from "./geoPresenceFeature.types";
 
 function GeoPresenceDashboard({
   config,
@@ -35,7 +25,7 @@ function GeoPresenceDashboard({
   onUserSelected,
   onModeChanged,
   onLocationSearched,
-}: GeoPresenceDashboardProps) {
+}: GeoPresenceFeatureProps) {
   const {
     mode: configuredMode = "2d",
     enableModeToggle = false,
