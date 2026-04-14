@@ -25,6 +25,8 @@ function GeoPresenceDashboard() {
     const [currentMode, setCurrentMode] = useState<GeoPresenceMode>(configuredMode);
     const [selectedUser, setSelectedUser] = useState<PresenceUser | null>(null);
     const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
+    const [showMatchedOnly, setShowMatchedOnly] = useState(false);
+    const [autoScrollToSelectedUser, setAutoScrollToSelectedUser] = useState(true);
 
     const totalUserCount = mockPresenceUsers.length;
     const publicUserCount = countUsersByVisibility(mockPresenceUsers, 'public');
@@ -32,7 +34,11 @@ function GeoPresenceDashboard() {
     const hiddenUserCount = countUsersByVisibility(mockPresenceUsers, 'hidden');
     const matchedUserCount = countMatchedUsers(mockPresenceUsers);
 
-    const filteredUsers = filterUsersByVisibility(mockPresenceUsers, visibilityFilter);
+    const visibilityFilteredUsers = filterUsersByVisibility(mockPresenceUsers, visibilityFilter);
+
+    const filteredUsers = showMatchedOnly
+        ? visibilityFilteredUsers.filter((user) => user.isMatch)
+        : visibilityFilteredUsers;
 
     const initialLatitude = initialView?.lat ?? 39.5;
     const initialLongitude = initialView?.lon ?? -98.35;
@@ -49,6 +55,16 @@ function GeoPresenceDashboard() {
 
     const handleVisibilityFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setVisibilityFilter(event.target.value as VisibilityFilter);
+    };
+
+    const handleShowMatchedOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setShowMatchedOnly(event.target.checked);
+    };
+
+    const handleAutoScrollToSelectedUserChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setAutoScrollToSelectedUser(event.target.checked);
     };
 
     return (
@@ -73,8 +89,12 @@ function GeoPresenceDashboard() {
                 visibilityFilter={visibilityFilter}
                 filteredUserCount={filteredUsers.length}
                 selectedUserName={selectedUser?.displayName}
+                showMatchedOnly={showMatchedOnly}
+                autoScrollToSelectedUser={autoScrollToSelectedUser}
                 onModeToggle={handleModeToggle}
                 onVisibilityFilterChange={handleVisibilityFilterChange}
+                onShowMatchedOnlyChange={handleShowMatchedOnlyChange}
+                onAutoScrollToSelectedUserChange={handleAutoScrollToSelectedUserChange}
             />
 
             <section className="app__main-content">
@@ -100,6 +120,7 @@ function GeoPresenceDashboard() {
                 users={filteredUsers}
                 selectedUser={selectedUser}
                 onUserSelect={handleUserSelect}
+                autoScrollToSelectedUser={autoScrollToSelectedUser}
             />
         </main>
     );

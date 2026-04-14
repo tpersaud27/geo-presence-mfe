@@ -16,8 +16,12 @@ interface ConfigurationSummaryProps {
   visibilityFilter: VisibilityFilter;
   filteredUserCount: number;
   selectedUserName?: string;
+  showMatchedOnly: boolean;
+  autoScrollToSelectedUser: boolean;
   onModeToggle: () => void;
   onVisibilityFilterChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  onShowMatchedOnlyChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onAutoScrollToSelectedUserChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 function ConfigurationSummary({
@@ -35,8 +39,12 @@ function ConfigurationSummary({
   visibilityFilter,
   filteredUserCount,
   selectedUserName,
+  showMatchedOnly,
+  autoScrollToSelectedUser,
   onModeToggle,
   onVisibilityFilterChange,
+  onShowMatchedOnlyChange,
+  onAutoScrollToSelectedUserChange,
 }: ConfigurationSummaryProps) {
   return (
     <section className="app__summary">
@@ -79,6 +87,12 @@ function ConfigurationSummary({
           <strong>Active Visibility Filter:</strong> {visibilityFilter}
         </li>
         <li>
+          <strong>Matched-Only Filter Enabled:</strong> {showMatchedOnly ? 'Yes' : 'No'}
+        </li>
+        <li>
+          <strong>Auto-Scroll Selected User:</strong> {autoScrollToSelectedUser ? 'Yes' : 'No'}
+        </li>
+        <li>
           <strong>Filtered User Count:</strong> {filteredUserCount}
         </li>
         <li>
@@ -106,6 +120,30 @@ function ConfigurationSummary({
           <option value="matches-only">Matches Only</option>
           <option value="hidden">Hidden</option>
         </select>
+      </div>
+
+      <div style={{ marginTop: '16px' }}>
+        <label htmlFor="matched-only-filter">
+          <input
+            id="matched-only-filter"
+            type="checkbox"
+            checked={showMatchedOnly}
+            onChange={onShowMatchedOnlyChange}
+          />{' '}
+          Show matched users only
+        </label>
+      </div>
+
+      <div style={{ marginTop: '12px' }}>
+        <label htmlFor="auto-scroll-selected-user">
+          <input
+            id="auto-scroll-selected-user"
+            type="checkbox"
+            checked={autoScrollToSelectedUser}
+            onChange={onAutoScrollToSelectedUserChange}
+          />{' '}
+          Auto-scroll selected user into list view
+        </label>
       </div>
     </section>
   );
