@@ -147,6 +147,46 @@ function Map2DRenderer({
         markerInstancesRef.current = nextMarkers;
     }, [users, selectedUser, onUserSelect]);
 
+    useEffect(() => {
+        const map = mapInstanceRef.current;
+
+        if (!map) {
+            return;
+        }
+
+        if (users.length === 0) {
+            map.easeTo({
+                center: [initialLongitude, initialLatitude],
+                zoom: initialZoom,
+                duration: 800,
+            });
+            return;
+        }
+
+        if (users.length === 1) {
+            const user = users[0];
+
+            map.easeTo({
+                center: [user.coordinates.lon, user.coordinates.lat],
+                zoom: 8,
+                duration: 800,
+            });
+            return;
+        }
+
+        const bounds = new maplibregl.LngLatBounds();
+
+        users.forEach((user) => {
+            bounds.extend([user.coordinates.lon, user.coordinates.lat]);
+        });
+
+        map.fitBounds(bounds, {
+            padding: 60,
+            maxZoom: 8,
+            duration: 800,
+        });
+    }, [users, initialLatitude, initialLongitude, initialZoom]);
+
     return <div ref={mapContainerRef} className="app__map-container" />;
 }
 
