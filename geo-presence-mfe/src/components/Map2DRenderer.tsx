@@ -154,6 +154,15 @@ function Map2DRenderer({
             return;
         }
 
+        if (selectedUser) {
+            map.easeTo({
+                center: [selectedUser.coordinates.lon, selectedUser.coordinates.lat],
+                zoom: Math.max(map.getZoom(), 8),
+                duration: 800,
+            });
+            return;
+        }
+
         if (users.length === 0) {
             map.easeTo({
                 center: [initialLongitude, initialLatitude],
@@ -185,7 +194,7 @@ function Map2DRenderer({
             maxZoom: 8,
             duration: 800,
         });
-    }, [users, initialLatitude, initialLongitude, initialZoom]);
+    }, [users, selectedUser, initialLatitude, initialLongitude, initialZoom]);
 
     return <div ref={mapContainerRef} className="app__map-container" />;
 }
