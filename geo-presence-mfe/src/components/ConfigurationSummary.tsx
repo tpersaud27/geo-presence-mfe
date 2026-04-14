@@ -16,11 +16,14 @@ interface ConfigurationSummaryProps {
   visibilityFilter: VisibilityFilter;
   filteredUserCount: number;
   selectedUserName?: string;
+  searchTerm: string;
   showMatchedOnly: boolean;
   showOnlineOnly: boolean;
   autoScrollToSelectedUser: boolean;
   onModeToggle: () => void;
   onVisibilityFilterChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  onSearchTermChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onClearSearch: () => void;
   onShowMatchedOnlyChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onShowOnlineOnlyChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onAutoScrollToSelectedUserChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -41,15 +44,20 @@ function ConfigurationSummary({
   visibilityFilter,
   filteredUserCount,
   selectedUserName,
+  searchTerm,
   showMatchedOnly,
   showOnlineOnly,
   autoScrollToSelectedUser,
   onModeToggle,
   onVisibilityFilterChange,
+  onSearchTermChange,
+  onClearSearch,
   onShowMatchedOnlyChange,
   onShowOnlineOnlyChange,
   onAutoScrollToSelectedUserChange,
 }: ConfigurationSummaryProps) {
+  const hasSearchTerm = searchTerm.trim().length > 0;
+
   return (
     <section className="app__summary">
       <h2>Configuration Summary</h2>
@@ -91,6 +99,9 @@ function ConfigurationSummary({
           <strong>Active Visibility Filter:</strong> {visibilityFilter}
         </li>
         <li>
+          <strong>Active Search Term:</strong> {hasSearchTerm ? searchTerm : 'None'}
+        </li>
+        <li>
           <strong>Matched-Only Filter Enabled:</strong> {showMatchedOnly ? 'Yes' : 'No'}
         </li>
         <li>
@@ -114,6 +125,33 @@ function ConfigurationSummary({
       )}
 
       <div style={{ marginTop: '16px' }}>
+        <label htmlFor="name-search">
+          <strong>Search Users: </strong>
+        </label>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+          <input
+            id="name-search"
+            type="text"
+            value={searchTerm}
+            onChange={onSearchTermChange}
+            placeholder="Search by display name"
+            style={{
+              flex: 1,
+              padding: '10px 12px',
+              borderRadius: '8px',
+              border: '1px solid #cbd5e1',
+              fontSize: '14px',
+            }}
+          />
+          {hasSearchTerm && (
+            <button type="button" onClick={onClearSearch}>
+              Clear
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div style={{ marginTop: '16px' }}>
         <label htmlFor="visibility-filter">
           <strong>Visibility Filter: </strong>
         </label>
@@ -121,6 +159,14 @@ function ConfigurationSummary({
           id="visibility-filter"
           value={visibilityFilter}
           onChange={onVisibilityFilterChange}
+          style={{
+            display: 'block',
+            marginTop: '8px',
+            padding: '10px 12px',
+            borderRadius: '8px',
+            border: '1px solid #cbd5e1',
+            fontSize: '14px',
+          }}
         >
           <option value="all">All</option>
           <option value="public">Public</option>

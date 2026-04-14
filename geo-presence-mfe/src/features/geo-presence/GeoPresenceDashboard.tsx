@@ -25,6 +25,7 @@ function GeoPresenceDashboard() {
     const [currentMode, setCurrentMode] = useState<GeoPresenceMode>(configuredMode);
     const [selectedUser, setSelectedUser] = useState<PresenceUser | null>(null);
     const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
+    const [searchTerm, setSearchTerm] = useState('');
     const [showMatchedOnly, setShowMatchedOnly] = useState(false);
     const [showOnlineOnly, setShowOnlineOnly] = useState(false);
     const [autoScrollToSelectedUser, setAutoScrollToSelectedUser] = useState(true);
@@ -41,9 +42,17 @@ function GeoPresenceDashboard() {
         ? visibilityFilteredUsers.filter((user) => user.isMatch)
         : visibilityFilteredUsers;
 
-    const filteredUsers = showOnlineOnly
+    const onlineFilteredUsers = showOnlineOnly
         ? matchedFilteredUsers.filter((user) => user.status === 'online')
         : matchedFilteredUsers;
+
+    const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+
+    const filteredUsers = normalizedSearchTerm
+        ? onlineFilteredUsers.filter((user) =>
+            user.displayName.toLowerCase().includes(normalizedSearchTerm)
+        )
+        : onlineFilteredUsers;
 
     const initialLatitude = initialView?.lat ?? 39.5;
     const initialLongitude = initialView?.lon ?? -98.35;
@@ -72,6 +81,14 @@ function GeoPresenceDashboard() {
 
     const handleVisibilityFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setVisibilityFilter(event.target.value as VisibilityFilter);
+    };
+
+    const handleSearchTermChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const handleClearSearch = () => {
+        setSearchTerm('');
     };
 
     const handleShowMatchedOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,11 +127,14 @@ function GeoPresenceDashboard() {
                 visibilityFilter={visibilityFilter}
                 filteredUserCount={filteredUsers.length}
                 selectedUserName={selectedUser?.displayName}
+                searchTerm={searchTerm}
                 showMatchedOnly={showMatchedOnly}
                 showOnlineOnly={showOnlineOnly}
                 autoScrollToSelectedUser={autoScrollToSelectedUser}
                 onModeToggle={handleModeToggle}
                 onVisibilityFilterChange={handleVisibilityFilterChange}
+                onSearchTermChange={handleSearchTermChange}
+                onClearSearch={handleClearSearch}
                 onShowMatchedOnlyChange={handleShowMatchedOnlyChange}
                 onShowOnlineOnlyChange={handleShowOnlineOnlyChange}
                 onAutoScrollToSelectedUserChange={handleAutoScrollToSelectedUserChange}
