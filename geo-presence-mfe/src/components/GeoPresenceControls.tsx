@@ -1,5 +1,6 @@
 import type { GeoPresenceMode } from '../core/config/geoPresenceConfig';
 import type { VisibilityFilter } from '../core/models/visibilityFilter';
+import type { MapSearchTarget } from '../core/models/mapSearchTarget';
 
 interface GeoPresenceControlsProps {
     currentMode: GeoPresenceMode;
@@ -7,6 +8,9 @@ interface GeoPresenceControlsProps {
     visibilityFilter: VisibilityFilter;
     searchTerm: string;
     placeSearchTerm: string;
+    placeSuggestions: MapSearchTarget[];
+    placeSearchError: string | null;
+    placeSearchMessage: string | null;
     showMatchedOnly: boolean;
     showOnlineOnly: boolean;
     autoScrollToSelectedUser: boolean;
@@ -16,8 +20,10 @@ interface GeoPresenceControlsProps {
     onSearchTermChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onClearSearch: () => void;
     onPlaceSearchTermChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onPlaceSearchKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
     onSubmitPlaceSearch: () => void;
     onClearPlaceSearch: () => void;
+    onSelectPlaceSuggestion: (target: MapSearchTarget) => void;
     onShowMatchedOnlyChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onShowOnlineOnlyChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onAutoScrollToSelectedUserChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -29,6 +35,9 @@ function GeoPresenceControls({
     visibilityFilter,
     searchTerm,
     placeSearchTerm,
+    placeSuggestions,
+    placeSearchError,
+    placeSearchMessage,
     showMatchedOnly,
     showOnlineOnly,
     autoScrollToSelectedUser,
@@ -38,8 +47,10 @@ function GeoPresenceControls({
     onSearchTermChange,
     onClearSearch,
     onPlaceSearchTermChange,
+    onPlaceSearchKeyDown,
     onSubmitPlaceSearch,
     onClearPlaceSearch,
+    onSelectPlaceSuggestion,
     onShowMatchedOnlyChange,
     onShowOnlineOnlyChange,
     onAutoScrollToSelectedUserChange,
@@ -69,6 +80,7 @@ function GeoPresenceControls({
                         type="text"
                         value={placeSearchTerm}
                         onChange={onPlaceSearchTermChange}
+                        onKeyDown={onPlaceSearchKeyDown}
                         placeholder="Search city, state, or place"
                         style={{
                             flex: 1,
@@ -88,6 +100,46 @@ function GeoPresenceControls({
                         </button>
                     )}
                 </div>
+
+                {placeSuggestions.length > 0 && (
+                    <div
+                        style={{
+                            marginTop: '8px',
+                            border: '1px solid #d9e2ec',
+                            borderRadius: '8px',
+                            backgroundColor: '#ffffff',
+                            overflow: 'hidden',
+                        }}
+                    >
+                        {placeSuggestions.map((suggestion) => (
+                            <button
+                                key={`${suggestion.label}-${suggestion.lat}-${suggestion.lon}`}
+                                type="button"
+                                onClick={() => onSelectPlaceSuggestion(suggestion)}
+                                style={{
+                                    display: 'block',
+                                    width: '100%',
+                                    textAlign: 'left',
+                                    padding: '10px 12px',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    borderBottom: '1px solid #e9eef5',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                {suggestion.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
+
+                {placeSearchMessage && (
+                    <p style={{ marginTop: '8px', color: '#334e68' }}>{placeSearchMessage}</p>
+                )}
+
+                {placeSearchError && (
+                    <p style={{ marginTop: '8px', color: '#b42318' }}>{placeSearchError}</p>
+                )}
             </div>
 
             <div style={{ marginBottom: '20px' }}>

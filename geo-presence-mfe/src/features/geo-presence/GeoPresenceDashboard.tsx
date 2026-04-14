@@ -10,7 +10,7 @@ import {
     countUsersByVisibility,
     filterUsersByVisibility,
 } from '../../utils/presenceUserUtils';
-import { searchPlaceByName } from '../../utils/geocodingUtils';
+import { searchPlaceByName, searchPlaceSuggestions } from '../../utils/geocodingUtils';
 import SelectedUserDetails from '../../components/SelectedUserDetails';
 import PresenceUserList from '../../components/PresenceUserList';
 import GeoPresenceRendererPanel from '../../components/GeoPresenceRendererPanel';
@@ -30,8 +30,11 @@ function GeoPresenceDashboard() {
     const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [placeSearchTerm, setPlaceSearchTerm] = useState('');
+    const [placeSuggestions, setPlaceSuggestions] = useState<MapSearchTarget[]>([]);
     const [mapSearchTarget, setMapSearchTarget] = useState<MapSearchTarget | null>(null);
     const [isPlaceSearchLoading, setIsPlaceSearchLoading] = useState(false);
+    const [placeSearchError, setPlaceSearchError] = useState<string | null>(null);
+    const [placeSearchMessage, setPlaceSearchMessage] = useState<string | null>(null);
     const [showMatchedOnly, setShowMatchedOnly] = useState(false);
     const [showOnlineOnly, setShowOnlineOnly] = useState(false);
     const [autoScrollToSelectedUser, setAutoScrollToSelectedUser] = useState(true);
@@ -78,6 +81,36 @@ function GeoPresenceDashboard() {
         }
     }, [filteredUsers, selectedUser]);
 
+    useEffect(() => {
+        if (!geocodingSearchUrl) {
+            return;
+        }
+
+        const trimmed = placeSearchTerm.trim();
+
+        if (trimmed.length < 2) {
+            setPlaceSuggestions([]);
+            setPlaceSearchError(null);
+            return;
+        }
+
+        const timeoutId = window.setTimeout(async () => {
+            try {
+                const suggestions = await searchPlaceSuggestions(geocodingSearchUrl, trimmed);
+                setPlaceSuggestions(suggestions);
+                setPlaceSearchError(null);
+            } catch (error) {
+                console.error('Place suggestion search failed', error);
+                setPlaceSuggestions([]);
+                setPlaceSearchError('Unable to load location suggestions right now.');
+            }
+        }, 300);
+
+        return () => {
+            window.clearTimeout(timeoutId);
+        };
+    }, [placeSearchTerm, geocodingSearchUrl]);
+
     const handleModeToggle = () => {
         setCurrentMode((previousMode) => (previousMode === '2d' ? '3d' : '2d'));
     };
@@ -85,6 +118,7 @@ function GeoPresenceDashboard() {
     const handleUserSelect = (user: PresenceUser) => {
         setSelectedUser(user);
         setMapSearchTarget(null);
+        setPlaceSearchMessage(null);
     };
 
     const handleVisibilityFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -101,24 +135,36 @@ function GeoPresenceDashboard() {
 
     const handlePlaceSearchTermChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPlaceSearchTerm(event.target.value);
+        setPlaceSearchMessage(null);
+        setPlaceSearchError(null);
     };
 
     const handleSubmitPlaceSearch = async () => {
         if (!geocodingSearchUrl) {
+            setPlaceSearchError('Location search is not configured.');
             return;
         }
 
         try {
             setIsPlaceSearchLoading(true);
+            setPlaceSearchError(null);
+            setPlaceSearchMessage(null);
 
             const result = await searchPlaceByName(geocodingSearchUrl, placeSearchTerm);
 
-            if (result) {
-                setMapSearchTarget(result);
-                setSelectedUser(null);
+            if (!result) {
+                setMapSearchTarget(null);
+                setPlaceSearchMessage('No matching location was found.');
+                return;
             }
+
+            setMapSearchTarget(result);
+            setSelectedUser(null);
+            setPlaceSuggestions([]);
+            setPlaceSearchMessage(`Showing map results for ${result.label}`);
         } catch (error) {
             console.error('Place search failed', error);
+            setPlaceSearchError('Location search failed. Please try again.');
         } finally {
             setIsPlaceSearchLoading(false);
         }
@@ -126,7 +172,26 @@ function GeoPresenceDashboard() {
 
     const handleClearPlaceSearch = () => {
         setPlaceSearchTerm('');
+        setPlaceSuggestions([]);
         setMapSearchTarget(null);
+        setPlaceSearchError(null);
+        setPlaceSearchMessage(null);
+    };
+
+    const handleSelectPlaceSuggestion = (target: MapSearchTarget) => {
+        setPlaceSearchTerm(target.label);
+        setPlaceSuggestions([]);
+        setMapSearchTarget(target);
+        setSelectedUser(null);
+        setPlaceSearchError(null);
+        setPlaceSearchMessage(`Showing map results for ${target.label}`);
+    };
+
+    const handlePlaceSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            void handleSubmitPlaceSearch();
+        }
     };
 
     const handleShowMatchedOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,6 +223,9 @@ function GeoPresenceDashboard() {
                         visibilityFilter={visibilityFilter}
                         searchTerm={searchTerm}
                         placeSearchTerm={placeSearchTerm}
+                        placeSuggestions={placeSuggestions}
+                        placeSearchError={placeSearchError}
+                        placeSearchMessage={placeSearchMessage}
                         showMatchedOnly={showMatchedOnly}
                         showOnlineOnly={showOnlineOnly}
                         autoScrollToSelectedUser={autoScrollToSelectedUser}
@@ -167,8 +235,10 @@ function GeoPresenceDashboard() {
                         onSearchTermChange={handleSearchTermChange}
                         onClearSearch={handleClearSearch}
                         onPlaceSearchTermChange={handlePlaceSearchTermChange}
+                        onPlaceSearchKeyDown={handlePlaceSearchKeyDown}
                         onSubmitPlaceSearch={handleSubmitPlaceSearch}
                         onClearPlaceSearch={handleClearPlaceSearch}
+                        onSelectPlaceSuggestion={handleSelectPlaceSuggestion}
                         onShowMatchedOnlyChange={handleShowMatchedOnlyChange}
                         onShowOnlineOnlyChange={handleShowOnlineOnlyChange}
                         onAutoScrollToSelectedUserChange={handleAutoScrollToSelectedUserChange}
