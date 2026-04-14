@@ -153,7 +153,10 @@ body {
   box-shadow: 0 1px 4px rgba(15, 23, 42, 0.35);
   cursor: pointer;
   padding: 0;
-  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .app__map-marker:hover {
@@ -263,7 +266,9 @@ body {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .app__control-button:hover {
@@ -317,7 +322,6 @@ body {
 .app__suggestion-button--active {
   background: #eef4ff;
 }
-
 
 .app__helper-text {
   margin: 0;
@@ -375,6 +379,62 @@ body {
   overflow: hidden;
 }
 
+.app__globe-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.app__globe-hover-card {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 200px;
+  max-width: 280px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.88);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.22);
+  backdrop-filter: blur(6px);
+}
+
+.app__globe-hover-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  flex-shrink: 0;
+}
+
+.app__globe-hover-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.app__globe-hover-name {
+  margin: 0 0 4px;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.app__globe-hover-status {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.app__globe-hover-status--online {
+  color: #4ade80;
+}
+
+.app__globe-hover-status--offline {
+  color: #cbd5e1;
+}
 
 @media (max-width: 900px) {
   .app__main-content {

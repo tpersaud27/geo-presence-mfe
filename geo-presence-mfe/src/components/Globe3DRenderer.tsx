@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Cartesian2,
   Cartesian3,
@@ -45,6 +45,8 @@ function Globe3DRenderer({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const viewerRef = useRef<Viewer | null>(null);
   const clickHandlerRef = useRef<ScreenSpaceEventHandler | null>(null);
+  const hoverHandlerRef = useRef<ScreenSpaceEventHandler | null>(null);
+  const [hoveredUser, setHoveredUser] = useState<PresenceUser | null>(null);
 
   const defaultPitch = CesiumMath.toRadians(-35);
   const defaultHeading = 0;
@@ -111,6 +113,11 @@ function Globe3DRenderer({
         clickHandlerRef.current = null;
       }
 
+      if (hoverHandlerRef.current) {
+        hoverHandlerRef.current.destroy();
+        hoverHandlerRef.current = null;
+      }
+
       if (viewerRef.current) {
         viewerRef.current.destroy();
         viewerRef.current = null;
@@ -120,7 +127,6 @@ function Globe3DRenderer({
     tileUrlTemplate,
     initialLatitude,
     initialLongitude,
-    initialZoom,
     initialHeight,
     defaultPitch,
   ]);
@@ -128,7 +134,7 @@ function Globe3DRenderer({
   useEffect(() => {
     const viewer = viewerRef.current;
 
-    if (!viewer || viewer.isDestroyed()) {
+    if (!viewer) {
       return;
     }
 
@@ -219,6 +225,48 @@ function Globe3DRenderer({
   useEffect(() => {
     const viewer = viewerRef.current;
 
+    if (!viewer || !viewer.scene.canvas) {
+      return;
+    }
+
+    if (hoverHandlerRef.current) {
+      hoverHandlerRef.current.destroy();
+      hoverHandlerRef.current = null;
+    }
+
+    const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
+
+    handler.setInputAction((movement: { endPosition: Cartesian2 }) => {
+      const pickedObject = viewer.scene.pick(movement.endPosition);
+
+      if (!pickedObject || !pickedObject.id) {
+        setHoveredUser(null);
+        return;
+      }
+
+      const pickedEntityId =
+        typeof pickedObject.id.id === "string"
+          ? pickedObject.id.id
+          : pickedObject.id;
+
+      const matchedUser = users.find((user) => user.id === pickedEntityId);
+
+      setHoveredUser(matchedUser ?? null);
+    }, ScreenSpaceEventType.MOUSE_MOVE);
+
+    hoverHandlerRef.current = handler;
+
+    return () => {
+      if (hoverHandlerRef.current) {
+        hoverHandlerRef.current.destroy();
+        hoverHandlerRef.current = null;
+      }
+    };
+  }, [users]);
+
+  useEffect(() => {
+    const viewer = viewerRef.current;
+
     if (!viewer) {
       return;
     }
@@ -285,7 +333,33 @@ function Globe3DRenderer({
     return null;
   }
 
-  return <div ref={containerRef} className="app__globe-container" />;
+  return (
+    <div className="app__globe-wrapper">
+      <div ref={containerRef} className="app__globe-container" />
+
+      {hoveredUser && (
+        <div className="app__globe-hover-card">
+          <img
+            src={hoveredUser.avatarUrl}
+            alt={hoveredUser.displayName}
+            className="app__globe-hover-avatar"
+          />
+          <div className="app__globe-hover-content">
+            <p className="app__globe-hover-name">{hoveredUser.displayName}</p>
+            <p
+              className={
+                hoveredUser.status === "online"
+                  ? "app__globe-hover-status app__globe-hover-status--online"
+                  : "app__globe-hover-status app__globe-hover-status--offline"
+              }
+            >
+              {hoveredUser.status === "online" ? "Online" : "Offline"}
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default Globe3DRenderer;
