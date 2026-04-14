@@ -76,10 +76,11 @@ function GeoPresenceRendererPanel({
                     />
                 ) : (
                     <Globe3DRenderer
-                        tileUrlTemplate={tileUrlTemplate}
                         initialLatitude={initialLatitude}
                         initialLongitude={initialLongitude}
                         initialZoom={initialZoom}
+                        selectedUser={selectedUser}
+                        mapSearchTarget={mapSearchTarget}
                     />
                 )}
             </div>

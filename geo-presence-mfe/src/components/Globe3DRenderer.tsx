@@ -9,12 +9,16 @@ import {
     Viewer,
 } from 'cesium';
 import 'cesium/Build/Cesium/Widgets/widgets.css';
+import type { PresenceUser } from '../core/models/presenceUser';
+import type { MapSearchTarget } from '../core/models/mapSearchTarget';
 
 interface Globe3DRendererProps {
     tileUrlTemplate: string;
     initialLatitude: number;
     initialLongitude: number;
     initialZoom: number;
+    selectedUser: PresenceUser | null;
+    mapSearchTarget: MapSearchTarget | null;
 }
 
 function Globe3DRenderer({
@@ -22,6 +26,8 @@ function Globe3DRenderer({
     initialLatitude,
     initialLongitude,
     initialZoom,
+    selectedUser,
+    mapSearchTarget,
 }: Globe3DRendererProps) {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const viewerRef = useRef<Viewer | null>(null);
@@ -52,7 +58,6 @@ function Globe3DRenderer({
         });
 
         viewer.imageryLayers.add(new ImageryLayer(imageryProvider));
-
         viewer.scene.globe.baseColor = Color.BLACK;
 
         const height = Math.max(1500000, 12000000 / Math.max(initialZoom, 1));
@@ -80,7 +85,20 @@ function Globe3DRenderer({
         };
     }, [tileUrlTemplate, initialLatitude, initialLongitude, initialZoom]);
 
-    return <div ref={containerRef} className="app__globe-container" />;
-}
+    useEffect(() => {
+        const viewer = viewerRef.current;
 
-export default Globe3DRenderer;
+        if (!viewer) {
+            return;
+        }
+
+        if (mapSearchTarget) {
+            viewer.camera.flyTo({
+                destination: Cartesian3.fromDegrees(
+                    mapSearchTarget.lon,
+                    mapSearchTarget.lat,
+                    1200000
+                ),
+                orientation: {
+                    heading: 0,
+
