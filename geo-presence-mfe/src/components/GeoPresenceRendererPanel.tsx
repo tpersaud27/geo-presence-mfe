@@ -2,6 +2,7 @@ import type { GeoPresenceMode } from '../core/config/geoPresenceConfig';
 import type { PresenceUser } from '../core/models/presenceUser';
 import type { MapSearchTarget } from '../core/models/mapSearchTarget';
 import Map2DRenderer from './Map2DRenderer';
+import Globe3DRenderer from './Globe3DRenderer';
 
 interface GeoPresenceRendererPanelProps {
     mode: GeoPresenceMode;
@@ -74,10 +75,12 @@ function GeoPresenceRendererPanel({
                         onUserSelect={onUserSelect}
                     />
                 ) : (
-                    <div className="app__renderer-placeholder">
-                        <p>Cesium-based 3D globe renderer will be shown here.</p>
-                        <p>This surface will eventually render the globe, markers, and user interactions.</p>
-                    </div>
+                    <Globe3DRenderer
+                        tileUrlTemplate={tileUrlTemplate}
+                        initialLatitude={initialLatitude}
+                        initialLongitude={initialLongitude}
+                        initialZoom={initialZoom}
+                    />
                 )}
             </div>
         </section>
