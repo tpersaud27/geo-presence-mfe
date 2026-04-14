@@ -12,8 +12,13 @@ import 'cesium/Build/Cesium/Widgets/widgets.css';
 import type { PresenceUser } from '../core/models/presenceUser';
 import type { MapSearchTarget } from '../core/models/mapSearchTarget';
 
+// Fix for development mode static assets missing due to custom index.html routing
+if (typeof window !== 'undefined') {
+    (window as any).CESIUM_BASE_URL = '/node_modules/cesium/Build/Cesium/';
+}
+
 interface Globe3DRendererProps {
-    tileUrlTemplate: string;
+    tileUrlTemplate?: string;
     initialLatitude: number;
     initialLongitude: number;
     initialZoom: number;
@@ -33,7 +38,7 @@ function Globe3DRenderer({
     const viewerRef = useRef<Viewer | null>(null);
 
     useEffect(() => {
-        if (!containerRef.current || viewerRef.current) {
+        if (!containerRef.current || viewerRef.current || !tileUrlTemplate) {
             return;
         }
 
@@ -52,13 +57,14 @@ function Globe3DRenderer({
             sceneMode: SceneMode.SCENE3D,
         });
 
+        viewer.scene.globe.baseColor = Color.BLACK;
+
         const imageryProvider = new UrlTemplateImageryProvider({
             url: tileUrlTemplate,
             credit: '© OpenStreetMap contributors',
         });
 
         viewer.imageryLayers.add(new ImageryLayer(imageryProvider));
-        viewer.scene.globe.baseColor = Color.BLACK;
 
         const height = Math.max(1500000, 12000000 / Math.max(initialZoom, 1));
 
@@ -142,6 +148,8 @@ function Globe3DRenderer({
             duration: 1.2,
         });
     }, [mapSearchTarget, selectedUser, initialLatitude, initialLongitude, initialZoom]);
+
+    if (!tileUrlTemplate) return null; // Defensive check so Cesium doesn't crash if config is delayed
 
     return <div ref={containerRef} className="app__globe-container" />;
 }
