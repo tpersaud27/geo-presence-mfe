@@ -1,5 +1,3 @@
-// This file will hold a small seeded list of users that match PresenceUser model.
-
 import type { PresenceUser } from '../core/models/presenceUser';
 
 export const mockPresenceUsers: PresenceUser[] = [
@@ -13,6 +11,7 @@ export const mockPresenceUsers: PresenceUser[] = [
     },
     visibility: 'public',
     isMatch: true,
+    status: 'online',
     lastActiveAt: '2026-04-10T12:00:00Z',
   },
   {
@@ -25,6 +24,7 @@ export const mockPresenceUsers: PresenceUser[] = [
     },
     visibility: 'matches-only',
     isMatch: true,
+    status: 'offline',
     lastActiveAt: '2026-04-10T11:30:00Z',
   },
   {
@@ -37,6 +37,7 @@ export const mockPresenceUsers: PresenceUser[] = [
     },
     visibility: 'public',
     isMatch: false,
+    status: 'online',
     lastActiveAt: '2026-04-10T10:15:00Z',
   },
   {
@@ -49,6 +50,7 @@ export const mockPresenceUsers: PresenceUser[] = [
     },
     visibility: 'hidden',
     isMatch: false,
+    status: 'offline',
     lastActiveAt: '2026-04-09T22:45:00Z',
   },
   {
@@ -61,6 +63,7 @@ export const mockPresenceUsers: PresenceUser[] = [
     },
     visibility: 'public',
     isMatch: true,
+    status: 'online',
     lastActiveAt: '2026-04-10T09:50:00Z',
   },
 ];

@@ -25,6 +25,7 @@ function Map2DRenderer({
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const mapInstanceRef = useRef<maplibregl.Map | null>(null);
     const markerInstancesRef = useRef<maplibregl.Marker[]>([]);
+    const popupInstanceRef = useRef<maplibregl.Popup | null>(null);
 
     useEffect(() => {
         if (!mapContainerRef.current || mapInstanceRef.current) {
@@ -57,11 +58,21 @@ function Map2DRenderer({
 
         map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
+        const popup = new maplibregl.Popup({
+            closeButton: false,
+            closeOnClick: false,
+            offset: 16,
+        });
+
         mapInstanceRef.current = map;
+        popupInstanceRef.current = popup;
 
         return () => {
             markerInstancesRef.current.forEach((marker) => marker.remove());
             markerInstancesRef.current = [];
+
+            popup.remove();
+            popupInstanceRef.current = null;
 
             map.remove();
             mapInstanceRef.current = null;
@@ -70,8 +81,9 @@ function Map2DRenderer({
 
     useEffect(() => {
         const map = mapInstanceRef.current;
+        const popup = popupInstanceRef.current;
 
-        if (!map) {
+        if (!map || !popup) {
             return;
         }
 
@@ -91,6 +103,38 @@ function Map2DRenderer({
 
             markerElement.addEventListener('click', () => {
                 onUserSelect(user);
+            });
+
+            markerElement.addEventListener('mouseenter', () => {
+                const statusClass =
+                    user.status === 'online'
+                        ? 'app__map-popup-status app__map-popup-status--online'
+                        : 'app__map-popup-status app__map-popup-status--offline';
+
+                const popupHtml = `
+          <div class="app__map-popup">
+            <img
+              src="${user.avatarUrl ?? ''}"
+              alt="${user.displayName}"
+              class="app__map-popup-avatar"
+            />
+            <div class="app__map-popup-content">
+              <p class="app__map-popup-name">${user.displayName}</p>
+              <p class="${statusClass}">
+                ${user.status === 'online' ? 'Online' : 'Offline'}
+              </p>
+            </div>
+          </div>
+        `;
+
+                popup
+                    .setLngLat([user.coordinates.lon, user.coordinates.lat])
+                    .setHTML(popupHtml)
+                    .addTo(map);
+            });
+
+            markerElement.addEventListener('mouseleave', () => {
+                popup.remove();
             });
 
             const marker = new maplibregl.Marker({ element: markerElement })

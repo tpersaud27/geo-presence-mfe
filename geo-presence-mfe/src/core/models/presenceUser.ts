@@ -1,9 +1,5 @@
-// This file should define:
-// visibility options
-// coordinates model
-// user/presence data shape
-
 export type PresenceVisibility = 'public' | 'matches-only' | 'hidden';
+export type PresenceStatus = 'online' | 'offline';
 
 export interface PresenceCoordinates {
   lat: number;
@@ -19,6 +15,7 @@ export interface PresenceUser {
 
   visibility: PresenceVisibility;
   isMatch: boolean;
+  status: PresenceStatus;
 
   lastActiveAt?: string;
 }
