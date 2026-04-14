@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { PresenceUser } from '../core/models/presenceUser';
+import type { MapSearchTarget } from '../core/models/mapSearchTarget';
 
 interface Map2DRendererProps {
     users: PresenceUser[];
@@ -10,6 +11,7 @@ interface Map2DRendererProps {
     initialLatitude: number;
     initialLongitude: number;
     initialZoom: number;
+    mapSearchTarget: MapSearchTarget | null;
     onUserSelect: (user: PresenceUser) => void;
 }
 
@@ -20,6 +22,7 @@ function Map2DRenderer({
     initialLatitude,
     initialLongitude,
     initialZoom,
+    mapSearchTarget,
     onUserSelect,
 }: Map2DRendererProps) {
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -154,6 +157,15 @@ function Map2DRenderer({
             return;
         }
 
+        if (mapSearchTarget) {
+            map.easeTo({
+                center: [mapSearchTarget.lon, mapSearchTarget.lat],
+                zoom: mapSearchTarget.zoom ?? 9,
+                duration: 900,
+            });
+            return;
+        }
+
         if (selectedUser) {
             map.easeTo({
                 center: [selectedUser.coordinates.lon, selectedUser.coordinates.lat],
@@ -194,7 +206,7 @@ function Map2DRenderer({
             maxZoom: 8,
             duration: 800,
         });
-    }, [users, selectedUser, initialLatitude, initialLongitude, initialZoom]);
+    }, [users, selectedUser, mapSearchTarget, initialLatitude, initialLongitude, initialZoom]);
 
     return <div ref={mapContainerRef} className="app__map-container" />;
 }

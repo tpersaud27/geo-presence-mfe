@@ -1,5 +1,6 @@
 import type { GeoPresenceMode } from '../core/config/geoPresenceConfig';
 import type { PresenceUser } from '../core/models/presenceUser';
+import type { MapSearchTarget } from '../core/models/mapSearchTarget';
 import Map2DRenderer from './Map2DRenderer';
 
 interface GeoPresenceRendererPanelProps {
@@ -10,6 +11,7 @@ interface GeoPresenceRendererPanelProps {
     initialLatitude: number;
     initialLongitude: number;
     initialZoom: number;
+    mapSearchTarget: MapSearchTarget | null;
     onUserSelect: (user: PresenceUser) => void;
 }
 
@@ -21,6 +23,7 @@ function GeoPresenceRendererPanel({
     initialLatitude,
     initialLongitude,
     initialZoom,
+    mapSearchTarget,
     onUserSelect,
 }: GeoPresenceRendererPanelProps) {
     const is2DMode = mode === '2d';
@@ -48,6 +51,7 @@ function GeoPresenceRendererPanel({
                         initialLatitude={initialLatitude}
                         initialLongitude={initialLongitude}
                         initialZoom={initialZoom}
+                        mapSearchTarget={mapSearchTarget}
                         onUserSelect={onUserSelect}
                     />
                 ) : (

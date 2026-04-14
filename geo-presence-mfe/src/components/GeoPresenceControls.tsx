@@ -6,13 +6,18 @@ interface GeoPresenceControlsProps {
     enableModeToggle: boolean;
     visibilityFilter: VisibilityFilter;
     searchTerm: string;
+    placeSearchTerm: string;
     showMatchedOnly: boolean;
     showOnlineOnly: boolean;
     autoScrollToSelectedUser: boolean;
+    isPlaceSearchLoading: boolean;
     onModeToggle: () => void;
     onVisibilityFilterChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
     onSearchTermChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onClearSearch: () => void;
+    onPlaceSearchTermChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onSubmitPlaceSearch: () => void;
+    onClearPlaceSearch: () => void;
     onShowMatchedOnlyChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onShowOnlineOnlyChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onAutoScrollToSelectedUserChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -23,18 +28,24 @@ function GeoPresenceControls({
     enableModeToggle,
     visibilityFilter,
     searchTerm,
+    placeSearchTerm,
     showMatchedOnly,
     showOnlineOnly,
     autoScrollToSelectedUser,
+    isPlaceSearchLoading,
     onModeToggle,
     onVisibilityFilterChange,
     onSearchTermChange,
     onClearSearch,
+    onPlaceSearchTermChange,
+    onSubmitPlaceSearch,
+    onClearPlaceSearch,
     onShowMatchedOnlyChange,
     onShowOnlineOnlyChange,
     onAutoScrollToSelectedUserChange,
 }: GeoPresenceControlsProps) {
     const hasSearchTerm = searchTerm.trim().length > 0;
+    const hasPlaceSearchTerm = placeSearchTerm.trim().length > 0;
 
     return (
         <section className="app__summary">
@@ -48,7 +59,38 @@ function GeoPresenceControls({
                 </div>
             )}
 
-            <div style={{ marginBottom: '16px' }}>
+            <div style={{ marginBottom: '20px' }}>
+                <label htmlFor="place-search">
+                    <strong>Search Map by Location</strong>
+                </label>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+                    <input
+                        id="place-search"
+                        type="text"
+                        value={placeSearchTerm}
+                        onChange={onPlaceSearchTermChange}
+                        placeholder="Search city, state, or place"
+                        style={{
+                            flex: 1,
+                            minWidth: '220px',
+                            padding: '10px 12px',
+                            borderRadius: '8px',
+                            border: '1px solid #cbd5e1',
+                            fontSize: '14px',
+                        }}
+                    />
+                    <button type="button" onClick={onSubmitPlaceSearch} disabled={isPlaceSearchLoading}>
+                        {isPlaceSearchLoading ? 'Searching...' : 'Go'}
+                    </button>
+                    {hasPlaceSearchTerm && (
+                        <button type="button" onClick={onClearPlaceSearch}>
+                            Clear
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
                 <label htmlFor="name-search">
                     <strong>Search Users</strong>
                 </label>

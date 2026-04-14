@@ -16,6 +16,7 @@ interface GeoPresenceSummaryProps {
     filteredUserCount: number;
     selectedUserName?: string;
     searchTerm: string;
+    activePlaceSearchLabel?: string;
     showMatchedOnly: boolean;
     showOnlineOnly: boolean;
     autoScrollToSelectedUser: boolean;
@@ -36,6 +37,7 @@ function GeoPresenceSummary({
     filteredUserCount,
     selectedUserName,
     searchTerm,
+    activePlaceSearchLabel,
     showMatchedOnly,
     showOnlineOnly,
     autoScrollToSelectedUser,
@@ -80,7 +82,10 @@ function GeoPresenceSummary({
                     <strong>Active Visibility Filter:</strong> {visibilityFilter}
                 </li>
                 <li>
-                    <strong>Active Search Term:</strong> {hasSearchTerm ? searchTerm : 'None'}
+                    <strong>Active User Search:</strong> {hasSearchTerm ? searchTerm : 'None'}
+                </li>
+                <li>
+                    <strong>Active Place Search:</strong> {activePlaceSearchLabel ?? 'None'}
                 </li>
                 <li>
                     <strong>Matched-Only Filter Enabled:</strong> {showMatchedOnly ? 'Yes' : 'No'}

@@ -4,11 +4,13 @@ import { mockPresenceUsers } from '../../mock/mockPresenceUsers';
 import type { GeoPresenceMode } from '../../core/config/geoPresenceConfig';
 import type { PresenceUser } from '../../core/models/presenceUser';
 import type { VisibilityFilter } from '../../core/models/visibilityFilter';
+import type { MapSearchTarget } from '../../core/models/mapSearchTarget';
 import {
     countMatchedUsers,
     countUsersByVisibility,
     filterUsersByVisibility,
 } from '../../utils/presenceUserUtils';
+import { searchPlaceByName } from '../../utils/geocodingUtils';
 import SelectedUserDetails from '../../components/SelectedUserDetails';
 import PresenceUserList from '../../components/PresenceUserList';
 import GeoPresenceRendererPanel from '../../components/GeoPresenceRendererPanel';
@@ -27,6 +29,9 @@ function GeoPresenceDashboard() {
     const [selectedUser, setSelectedUser] = useState<PresenceUser | null>(null);
     const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
     const [searchTerm, setSearchTerm] = useState('');
+    const [placeSearchTerm, setPlaceSearchTerm] = useState('');
+    const [mapSearchTarget, setMapSearchTarget] = useState<MapSearchTarget | null>(null);
+    const [isPlaceSearchLoading, setIsPlaceSearchLoading] = useState(false);
     const [showMatchedOnly, setShowMatchedOnly] = useState(false);
     const [showOnlineOnly, setShowOnlineOnly] = useState(false);
     const [autoScrollToSelectedUser, setAutoScrollToSelectedUser] = useState(true);
@@ -59,6 +64,7 @@ function GeoPresenceDashboard() {
     const initialLongitude = initialView?.lon ?? -98.35;
     const initialZoom = initialView?.zoom ?? 3;
     const tileUrlTemplate = providers.map2d.tileUrlTemplate;
+    const geocodingSearchUrl = providers.geocoding?.searchUrl;
 
     useEffect(() => {
         if (!selectedUser) {
@@ -78,6 +84,7 @@ function GeoPresenceDashboard() {
 
     const handleUserSelect = (user: PresenceUser) => {
         setSelectedUser(user);
+        setMapSearchTarget(null);
     };
 
     const handleVisibilityFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -90,6 +97,36 @@ function GeoPresenceDashboard() {
 
     const handleClearSearch = () => {
         setSearchTerm('');
+    };
+
+    const handlePlaceSearchTermChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPlaceSearchTerm(event.target.value);
+    };
+
+    const handleSubmitPlaceSearch = async () => {
+        if (!geocodingSearchUrl) {
+            return;
+        }
+
+        try {
+            setIsPlaceSearchLoading(true);
+
+            const result = await searchPlaceByName(geocodingSearchUrl, placeSearchTerm);
+
+            if (result) {
+                setMapSearchTarget(result);
+                setSelectedUser(null);
+            }
+        } catch (error) {
+            console.error('Place search failed', error);
+        } finally {
+            setIsPlaceSearchLoading(false);
+        }
+    };
+
+    const handleClearPlaceSearch = () => {
+        setPlaceSearchTerm('');
+        setMapSearchTarget(null);
     };
 
     const handleShowMatchedOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,13 +157,18 @@ function GeoPresenceDashboard() {
                         enableModeToggle={enableModeToggle}
                         visibilityFilter={visibilityFilter}
                         searchTerm={searchTerm}
+                        placeSearchTerm={placeSearchTerm}
                         showMatchedOnly={showMatchedOnly}
                         showOnlineOnly={showOnlineOnly}
                         autoScrollToSelectedUser={autoScrollToSelectedUser}
+                        isPlaceSearchLoading={isPlaceSearchLoading}
                         onModeToggle={handleModeToggle}
                         onVisibilityFilterChange={handleVisibilityFilterChange}
                         onSearchTermChange={handleSearchTermChange}
                         onClearSearch={handleClearSearch}
+                        onPlaceSearchTermChange={handlePlaceSearchTermChange}
+                        onSubmitPlaceSearch={handleSubmitPlaceSearch}
+                        onClearPlaceSearch={handleClearPlaceSearch}
                         onShowMatchedOnlyChange={handleShowMatchedOnlyChange}
                         onShowOnlineOnlyChange={handleShowOnlineOnlyChange}
                         onAutoScrollToSelectedUserChange={handleAutoScrollToSelectedUserChange}
@@ -140,6 +182,7 @@ function GeoPresenceDashboard() {
                         initialLatitude={initialLatitude}
                         initialLongitude={initialLongitude}
                         initialZoom={initialZoom}
+                        mapSearchTarget={mapSearchTarget}
                         onUserSelect={handleUserSelect}
                     />
                 </div>
@@ -160,6 +203,7 @@ function GeoPresenceDashboard() {
                         filteredUserCount={filteredUsers.length}
                         selectedUserName={selectedUser?.displayName}
                         searchTerm={searchTerm}
+                        activePlaceSearchLabel={mapSearchTarget?.label}
                         showMatchedOnly={showMatchedOnly}
                         showOnlineOnly={showOnlineOnly}
                         autoScrollToSelectedUser={autoScrollToSelectedUser}
