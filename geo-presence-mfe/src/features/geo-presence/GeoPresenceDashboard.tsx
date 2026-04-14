@@ -24,9 +24,18 @@ import GeoPresenceSummary from "../../components/GeoPresenceSummary";
 interface GeoPresenceDashboardProps {
   config: GeoPresenceConfig;
   users: PresenceUser[];
+  onUserSelected?: (user: PresenceUser) => void;
+  onModeChanged?: (mode: GeoPresenceMode) => void;
+  onLocationSearched?: (target: MapSearchTarget) => void;
 }
 
-function GeoPresenceDashboard({ config, users }: GeoPresenceDashboardProps) {
+function GeoPresenceDashboard({
+  config,
+  users,
+  onUserSelected,
+  onModeChanged,
+  onLocationSearched,
+}: GeoPresenceDashboardProps) {
   const {
     mode: configuredMode = "2d",
     enableModeToggle = false,
@@ -142,13 +151,18 @@ function GeoPresenceDashboard({ config, users }: GeoPresenceDashboardProps) {
   }, [placeSearchTerm, geocodingSearchUrl]);
 
   const handleModeToggle = () => {
-    setCurrentMode((previousMode) => (previousMode === "2d" ? "3d" : "2d"));
+    setCurrentMode((previousMode) => {
+      const nextMode = previousMode === "2d" ? "3d" : "2d";
+      onModeChanged?.(nextMode);
+      return nextMode;
+    });
   };
 
   const handleUserSelect = (user: PresenceUser) => {
     setSelectedUser(user);
     setMapSearchTarget(null);
     setPlaceSearchMessage(null);
+    onUserSelected?.(user);
   };
 
   const handleVisibilityFilterChange = (
@@ -202,6 +216,7 @@ function GeoPresenceDashboard({ config, users }: GeoPresenceDashboardProps) {
       setPlaceSuggestions([]);
       setActivePlaceSuggestionIndex(-1);
       setPlaceSearchMessage(`Showing map results for ${result.label}`);
+      onLocationSearched?.(result);
     } catch (error) {
       console.error("Place search failed", error);
       setPlaceSearchError("Location search failed. Please try again.");
@@ -227,6 +242,7 @@ function GeoPresenceDashboard({ config, users }: GeoPresenceDashboardProps) {
     setSelectedUser(null);
     setPlaceSearchError(null);
     setPlaceSearchMessage(`Showing map results for ${target.label}`);
+    onLocationSearched?.(target);
   };
 
   const handlePlaceSearchKeyDown = (
