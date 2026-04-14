@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { mockGeoPresenceConfig } from '../../mock/mockGeoPresenceConfig';
 import { mockPresenceUsers } from '../../mock/mockPresenceUsers';
 import type { GeoPresenceMode } from '../../core/config/geoPresenceConfig';
@@ -26,6 +26,7 @@ function GeoPresenceDashboard() {
     const [selectedUser, setSelectedUser] = useState<PresenceUser | null>(null);
     const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all');
     const [showMatchedOnly, setShowMatchedOnly] = useState(false);
+    const [showOnlineOnly, setShowOnlineOnly] = useState(false);
     const [autoScrollToSelectedUser, setAutoScrollToSelectedUser] = useState(true);
 
     const totalUserCount = mockPresenceUsers.length;
@@ -36,14 +37,30 @@ function GeoPresenceDashboard() {
 
     const visibilityFilteredUsers = filterUsersByVisibility(mockPresenceUsers, visibilityFilter);
 
-    const filteredUsers = showMatchedOnly
+    const matchedFilteredUsers = showMatchedOnly
         ? visibilityFilteredUsers.filter((user) => user.isMatch)
         : visibilityFilteredUsers;
+
+    const filteredUsers = showOnlineOnly
+        ? matchedFilteredUsers.filter((user) => user.status === 'online')
+        : matchedFilteredUsers;
 
     const initialLatitude = initialView?.lat ?? 39.5;
     const initialLongitude = initialView?.lon ?? -98.35;
     const initialZoom = initialView?.zoom ?? 3;
     const tileUrlTemplate = providers.map2d.tileUrlTemplate;
+
+    useEffect(() => {
+        if (!selectedUser) {
+            return;
+        }
+
+        const selectedUserStillVisible = filteredUsers.some((user) => user.id === selectedUser.id);
+
+        if (!selectedUserStillVisible) {
+            setSelectedUser(null);
+        }
+    }, [filteredUsers, selectedUser]);
 
     const handleModeToggle = () => {
         setCurrentMode((previousMode) => (previousMode === '2d' ? '3d' : '2d'));
@@ -59,6 +76,10 @@ function GeoPresenceDashboard() {
 
     const handleShowMatchedOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setShowMatchedOnly(event.target.checked);
+    };
+
+    const handleShowOnlineOnlyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setShowOnlineOnly(event.target.checked);
     };
 
     const handleAutoScrollToSelectedUserChange = (
@@ -90,10 +111,12 @@ function GeoPresenceDashboard() {
                 filteredUserCount={filteredUsers.length}
                 selectedUserName={selectedUser?.displayName}
                 showMatchedOnly={showMatchedOnly}
+                showOnlineOnly={showOnlineOnly}
                 autoScrollToSelectedUser={autoScrollToSelectedUser}
                 onModeToggle={handleModeToggle}
                 onVisibilityFilterChange={handleVisibilityFilterChange}
                 onShowMatchedOnlyChange={handleShowMatchedOnlyChange}
+                onShowOnlineOnlyChange={handleShowOnlineOnlyChange}
                 onAutoScrollToSelectedUserChange={handleAutoScrollToSelectedUserChange}
             />
 

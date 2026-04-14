@@ -17,10 +17,12 @@ interface ConfigurationSummaryProps {
   filteredUserCount: number;
   selectedUserName?: string;
   showMatchedOnly: boolean;
+  showOnlineOnly: boolean;
   autoScrollToSelectedUser: boolean;
   onModeToggle: () => void;
   onVisibilityFilterChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   onShowMatchedOnlyChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onShowOnlineOnlyChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onAutoScrollToSelectedUserChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -40,10 +42,12 @@ function ConfigurationSummary({
   filteredUserCount,
   selectedUserName,
   showMatchedOnly,
+  showOnlineOnly,
   autoScrollToSelectedUser,
   onModeToggle,
   onVisibilityFilterChange,
   onShowMatchedOnlyChange,
+  onShowOnlineOnlyChange,
   onAutoScrollToSelectedUserChange,
 }: ConfigurationSummaryProps) {
   return (
@@ -90,6 +94,9 @@ function ConfigurationSummary({
           <strong>Matched-Only Filter Enabled:</strong> {showMatchedOnly ? 'Yes' : 'No'}
         </li>
         <li>
+          <strong>Online-Only Filter Enabled:</strong> {showOnlineOnly ? 'Yes' : 'No'}
+        </li>
+        <li>
           <strong>Auto-Scroll Selected User:</strong> {autoScrollToSelectedUser ? 'Yes' : 'No'}
         </li>
         <li>
@@ -131,6 +138,18 @@ function ConfigurationSummary({
             onChange={onShowMatchedOnlyChange}
           />{' '}
           Show matched users only
+        </label>
+      </div>
+
+      <div style={{ marginTop: '12px' }}>
+        <label htmlFor="online-only-filter">
+          <input
+            id="online-only-filter"
+            type="checkbox"
+            checked={showOnlineOnly}
+            onChange={onShowOnlineOnlyChange}
+          />{' '}
+          Show online users only
         </label>
       </div>
 
